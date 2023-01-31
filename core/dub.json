@@ -1,0 +1,7 @@
+{
+	"description": "Delta Core",
+	"name": "core",
+	"targetType": "library",
+	"sourcePaths": ["."],
+	"importPaths": ["."]
+}
