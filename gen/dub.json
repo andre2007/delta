@@ -1,0 +1,10 @@
+{
+	"description": "Delta generator",
+	"name": "gen",
+	"targetType": "library",
+	"sourcePaths": ["."],
+	"importPaths": ["."],
+	"dependencies": {
+		"dxml": "0.4.3"
+	}
+}

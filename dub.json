@@ -1,0 +1,11 @@
+{
+	"authors": [
+		"Andre Pany"
+	],
+	"copyright": "Copyright © 2023, Andre Pany",
+	"description": "Delta core library",
+	"license": "Boost Software License 1.0",
+	"name": "delta",
+	"targetType": "library",
+	"subPackages": ["core", "gen"]
+}
