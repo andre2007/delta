@@ -181,7 +181,7 @@ mixin template PascalClass(string name)
 					{
 						return executeClassMethodReturnStringArgsStringStringString(name, __traits(identifier, method), args[0], args[1], args[2]);
 					}
-					else static assert(false, "Not implemented: " ~ __traits(identifier, method) ~ ~ __traits(parent, method));
+					else static assert(false, "Not implemented: " ~ __traits(identifier, method) ); // ~ __traits(parent, method)
 				}
 			}
 			else
@@ -193,6 +193,30 @@ mixin template PascalClass(string name)
 					static if(is(ReturnType!method == bool) && args.length == 0)
 					{
 						return executeInstanceMethodReturnBoolArgsNone(_reference, __traits(identifier, method));
+					}
+
+					//	executeInstanceMethodReturnBoolArgsBool
+					else static if(is(ReturnType!method == bool) && args.length == 1 && is(typeof(args[0]) == bool))
+					{
+						return executeInstanceMethodReturnBoolArgsBool(_reference, __traits(identifier, method), args[0]);
+					}
+
+					//	executeInstanceMethodReturnBoolArgsInt
+					else static if(is(ReturnType!method == bool) && args.length == 1 && is(typeof(args[0]) == int))
+					{
+						return executeInstanceMethodReturnBoolArgsInt(_reference, __traits(identifier, method), args[0]);
+					}
+
+					//	executeInstanceMethodReturnBoolArgsFloatFloat
+					else static if(is(ReturnType!method == bool) && args.length == 2 && is(typeof(args[0]) == float) && is(typeof(args[1]) == float))
+					{
+						return executeInstanceMethodReturnBoolArgsFloatFloat(_reference, __traits(identifier, method), args[0], args[1]);
+					}
+
+					//	executeInstanceMethodReturnBoolArgsRef
+					else static if(is(ReturnType!method == bool) && args.length == 1 && is(typeof(args[0]) : Object))
+					{
+						return executeInstanceMethodReturnBoolArgsRef(_reference, __traits(identifier, method), args[0].reference);
 					}
 
 					//	executeInstanceMethodReturnIntArgsNone
@@ -207,6 +231,24 @@ mixin template PascalClass(string name)
 						executeInstanceMethodReturnNoneArgsRef(_reference, __traits(identifier, method), args[0].reference);
 					}
 
+					// executeInstanceMethodReturnNoneArgsRefString
+					else static if(is(ReturnType!method == void) && args.length == 2 && is(typeof(args[0]) : Object) && is(typeof(args[1]) == string))
+					{
+						executeInstanceMethodReturnNoneArgsRefString(_reference, __traits(identifier, method), args[0].reference, args[1]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsRefBool
+					else static if(is(ReturnType!method == void) && args.length == 2 && is(typeof(args[0]) : Object) && is(typeof(args[1]) == bool))
+					{
+						executeInstanceMethodReturnNoneArgsRefBool(_reference, __traits(identifier, method), args[0].reference, args[1]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsRefInt
+					else static if(is(ReturnType!method == void) && args.length == 2 && is(typeof(args[0]) : Object) && is(typeof(args[1]) == int))
+					{
+						executeInstanceMethodReturnNoneArgsRefInt(_reference, __traits(identifier, method), args[0].reference, args[1]);
+					}
+
 					// executeInstanceMethodReturnNoneArgsIntf
 					else static if(is(ReturnType!method == void) && args.length == 1  && is(typeof(args[0]) == interface))
 					{
@@ -217,6 +259,42 @@ mixin template PascalClass(string name)
 					else static if(is(ReturnType!method == void) && args.length == 1 && is(typeof(args[0]) == string))
 					{
 						executeInstanceMethodReturnNoneArgsString(_reference, __traits(identifier, method), args[0]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsBool
+					else static if(is(ReturnType!method == void) && args.length == 1 && is(typeof(args[0]) == bool))
+					{
+						executeInstanceMethodReturnNoneArgsBool(_reference, __traits(identifier, method), args[0]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsBoolBool
+					else static if(is(ReturnType!method == void) && args.length == 2 && is(typeof(args[0]) == bool) && is(typeof(args[1]) == bool))
+					{
+						executeInstanceMethodReturnNoneArgsBoolBool(_reference, __traits(identifier, method), args[0], args[1]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsInt
+					else static if(is(ReturnType!method == void) && args.length == 1 && is(typeof(args[0]) == int))
+					{
+						executeInstanceMethodReturnNoneArgsInt(_reference, __traits(identifier, method), args[0]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsIntRef
+					else static if(is(ReturnType!method == void) && args.length == 2 && is(typeof(args[0]) == int) && is(typeof(args[1]) : Object))
+					{
+						executeInstanceMethodReturnNoneArgsIntRef(_reference, __traits(identifier, method), args[0], args[1].reference);
+					}
+
+					// executeInstanceMethodReturnNoneArgsFloat
+					else static if(is(ReturnType!method == void) && args.length == 1 && is(typeof(args[0]) == float))
+					{
+						executeInstanceMethodReturnNoneArgsFloat(_reference, __traits(identifier, method), args[0]);
+					}
+
+					// executeInstanceMethodReturnNoneArgsFloatFloatBool
+					else static if(is(ReturnType!method == void) && args.length == 3 && is(typeof(args[0]) == float) && is(typeof(args[1]) == float) && is(typeof(args[2]) == bool))
+					{
+						executeInstanceMethodReturnNoneArgsFloatFloatBool(_reference, __traits(identifier, method), args[0], args[1], args[2]);
 					}
 
 					// executeInstanceMethodReturnNoneArgsNone
@@ -231,10 +309,29 @@ mixin template PascalClass(string name)
 						return executeInstanceMethodReturnStringArgsNone(_reference, __traits(identifier, method));
 					}
 
+					// executeInstanceMethodReturnStringArgsInt
+					else static if(is(ReturnType!method == string) && args.length == 1 && is(typeof(args[0]) == int))
+					{
+						return executeInstanceMethodReturnStringArgsInt(_reference, __traits(identifier, method), args[0]);
+					}
+
+					// executeInstanceMethodReturnStringArgsIntInt
+					else static if(is(ReturnType!method == string) && args.length == 2 && is(typeof(args[0]) == int) && is(typeof(args[1]) == int))
+					{
+						return executeInstanceMethodReturnStringArgsIntInt(_reference, __traits(identifier, method), args[0], args[1]);
+					}
+
 					// executeInstanceMethodReturnRefArgsNone
 					else static if(is(ReturnType!method : Object) && args.length == 0)
 					{
 						auto resultReference = executeInstanceMethodReturnRefArgsNone(_reference, __traits(identifier, method));
+						return new ReturnType!method(resultReference);
+					}
+
+					// executeInstanceMethodReturnRefArgsString
+					else static if(is(ReturnType!method : Object) && args.length == 1 && is(typeof(args[0]) == string))
+					{
+						auto resultReference = executeInstanceMethodReturnRefArgsString(_reference, __traits(identifier, method), args[0]);
 						return new ReturnType!method(resultReference);
 					}
 
@@ -250,10 +347,23 @@ mixin template PascalClass(string name)
 						return executeInstanceMethodReturnIntArgsStringRef(_reference, __traits(identifier, method), args[0], args[1].reference);
 					}
 
+					// executeInstanceMethodReturnFloatArgsNone
+					else static if(is(ReturnType!method == float) && args.length == 0)
+					{
+						return executeInstanceMethodReturnFloatArgsNone(_reference, __traits(identifier, method));
+					}
+
 					// executeInstanceMethodReturnRefArgsInt
 					else static if(is(ReturnType!method : Object) && args.length == 1 && is(typeof(args[0]) == int ))
 					{
 						auto resultReference =  executeInstanceMethodReturnRefArgsInt(_reference, __traits(identifier, method), args[0]);
+						return new ReturnType!method(resultReference);
+					}
+
+					// executeInstanceMethodReturnRefArgsStringBool
+					else static if(is(ReturnType!method : Object) && args.length == 2 && is(typeof(args[0]) == string) && is(typeof(args[1]) == bool ))
+					{
+						auto resultReference =  executeInstanceMethodReturnRefArgsStringBool(_reference, __traits(identifier, method), args[0], args[1]);
 						return new ReturnType!method(resultReference);
 					}
 
@@ -282,7 +392,7 @@ mixin template PascalClass(string name)
 		super(reference);
 	}
 
-	this(TObject obj)
+	this(DelphiObject obj)
 	{
 		super(obj.reference);
 	}
@@ -358,6 +468,46 @@ bool executeInstanceMethodReturnBoolArgsNone(ptrdiff_t reference, string name)
 	return fn(reference, pCharName);
 }
 
+bool executeInstanceMethodReturnBoolArgsBool(ptrdiff_t reference, string name, bool b)
+{
+	alias extern(Windows) bool function(ptrdiff_t, char*, bool) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsBool");
+	auto fn = cast(FN) fp;
+	return fn(reference, pCharName, b);
+}
+
+bool executeInstanceMethodReturnBoolArgsInt(ptrdiff_t reference, string name, int i)
+{
+	alias extern(Windows) bool function(ptrdiff_t, char*, int) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsInt");
+	auto fn = cast(FN) fp;
+	return fn(reference, pCharName, b);
+}
+
+bool executeInstanceMethodReturnBoolArgsFloatFloat(ptrdiff_t reference, string name, float f1, float f2)
+{
+	alias extern(Windows) bool function(ptrdiff_t, char*, float, float) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsFloatFloat");
+	auto fn = cast(FN) fp;
+	return fn(reference, pCharName, f1, f2);
+}
+
+bool executeInstanceMethodReturnBoolArgsRef(ptrdiff_t reference, string name, ptrdiff_t reference2)
+{
+	alias extern(Windows) bool function(ptrdiff_t, char*, ptrdiff_t) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsRef");
+	auto fn = cast(FN) fp;
+	return fn(reference, pCharName, reference2);
+}
+
 int executeInstanceMethodReturnIntArgsString(ptrdiff_t reference, string name, string value)
 {
 	alias extern(Windows) int function(ptrdiff_t, char*, char*) FN;
@@ -380,6 +530,66 @@ void executeInstanceMethodReturnNoneArgsString(ptrdiff_t reference, string name,
 	fn(reference, pCharName, pCharValue);
 }
 
+void executeInstanceMethodReturnNoneArgsBool(ptrdiff_t reference, string name, bool value)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, bool) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsBool");
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, value);
+}
+
+void executeInstanceMethodReturnNoneArgsBoolBool(ptrdiff_t reference, string name, bool b1, bool b2)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, bool, bool) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsBoolBool");
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, b1, b2);
+}
+
+void executeInstanceMethodReturnNoneArgsInt(ptrdiff_t reference, string name, int value)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, int) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsInt");
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, value);
+}
+
+void executeInstanceMethodReturnNoneArgsIntRef(ptrdiff_t reference, string name, int value, ptrdiff_t reference2)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, int, ptrdiff_t) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsIntRef");
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, value, reference2);
+}
+
+void executeInstanceMethodReturnNoneArgsFloat(ptrdiff_t reference, string name, float value)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, float) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsFloat");
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, value);
+}
+
+void executeInstanceMethodReturnNoneArgsFloatFloatBool(ptrdiff_t reference, string name, float f1, float f2, bool b)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, float, float, bool) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsFloatFloatBool");
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, f1, f2, b);
+}
+
 ptrdiff_t executeInstanceMethodReturnRefArgsNone(ptrdiff_t reference, string name)
 {
 	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*) FN;
@@ -400,6 +610,17 @@ ptrdiff_t executeInstanceMethodReturnRefArgsInt(ptrdiff_t reference, string name
 	return fn(reference, pCharName, i);
 }
 
+ptrdiff_t executeInstanceMethodReturnRefArgsStringBool(ptrdiff_t reference, string name, string s, bool b)
+{
+	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*, char*, bool) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	auto pCharValue = toUTFz!(char*)(s);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnRefArgsStringBool");
+	auto fn = cast(FN) fp;
+	return fn(reference, pCharName, pCharValue, b);
+}
+
 void executeInstanceMethodReturnNoneArgsRef(ptrdiff_t reference, string name, ptrdiff_t reference2)
 {
 	auto pCharName = toUTFz!(char*)(name);
@@ -408,6 +629,37 @@ void executeInstanceMethodReturnNoneArgsRef(ptrdiff_t reference, string name, pt
 	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2);
+}
+
+void executeInstanceMethodReturnNoneArgsRefString(ptrdiff_t reference, string name, ptrdiff_t reference2, string s)
+{
+	auto pCharName = toUTFz!(char*)(name);
+	auto pCharValue = toUTFz!(char*)(s);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefString");
+	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, char*) FN;
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, reference2, pCharValue);
+}
+
+void executeInstanceMethodReturnNoneArgsRefBool(ptrdiff_t reference, string name, ptrdiff_t reference2, bool b)
+{
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefBool");
+	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, bool) FN;
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, reference2, b);
+}
+
+void executeInstanceMethodReturnNoneArgsRefInt(ptrdiff_t reference, string name, ptrdiff_t reference2, int i)
+{
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefInt");
+	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, int) FN;
+	auto fn = cast(FN) fp;
+	fn(reference, pCharName, reference2, i);
 }
 
 void executeInstanceMethodReturnNoneArgsStructFloat(ptrdiff_t reference, string name, ptrdiff_t reference2, float f)
@@ -498,6 +750,38 @@ string executeInstanceMethodReturnStringArgsNone(ptrdiff_t reference, string nam
 	return s;
 }
 
+string executeInstanceMethodReturnStringArgsInt(ptrdiff_t reference, string name, int i)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, int, out BSTR) FN;
+	
+	auto pCharName = toUTFz!(char*)(name);
+
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnStringArgsInt_Out_String");
+	auto fn = cast(FN) fp;
+	
+	BSTR bStr;
+	fn(reference, pCharName, i, bStr);
+	string s = to!string(bStr[0 .. SysStringLen(bStr)]);
+	SysFreeString(bStr);
+	return s;
+}
+
+string executeInstanceMethodReturnStringArgsIntInt(ptrdiff_t reference, string name, int i1, int i2)
+{
+	alias extern(Windows) void function(ptrdiff_t, char*, int, int, out BSTR) FN;
+	
+	auto pCharName = toUTFz!(char*)(name);
+
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnStringArgsIntInt_Out_String");
+	auto fn = cast(FN) fp;
+	
+	BSTR bStr;
+	fn(reference, pCharName, i1, i2, bStr);
+	string s = to!string(bStr[0 .. SysStringLen(bStr)]);
+	SysFreeString(bStr);
+	return s;
+}
+
 int executeInstanceMethodReturnIntArgsStringRef(ptrdiff_t reference, string name, string value, ptrdiff_t r)
 {
 	alias extern(Windows) int function(ptrdiff_t, char*, char*, ptrdiff_t) FN;
@@ -507,6 +791,16 @@ int executeInstanceMethodReturnIntArgsStringRef(ptrdiff_t reference, string name
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnIntArgsStringRef");
 	auto fn = cast(FN) fp;
 	return fn(reference, pCharName, pCharValue, r);
+}
+
+float executeInstanceMethodReturnFloatArgsNone(ptrdiff_t reference, string name)
+{
+	alias extern(Windows) float function(ptrdiff_t, char*) FN;
+	auto pCharName = toUTFz!(char*)(name);
+	
+	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnFloatArgsNone");
+	auto fn = cast(FN) fp;
+	return fn(reference, pCharName);
 }
 
 ptrdiff_t executeClassMethodReturnRefArgsString(string qualifiedName, string name, string value)

@@ -4,6 +4,7 @@ import std;
 import delta.gen.utils;
 
 enum SymbolCategory {routine, constant, variable, type, structure}
+enum SearchScope {currentUnit, usedUnits}
 
 struct Symbol
 {
@@ -28,13 +29,15 @@ struct UnitCache
 struct Constant
 {
     string name;
-    string declaration;    
+    string declaration;
+    string visibility;  
 }
 
 struct Variable
 {
     string name;
     string declaration;
+    string visibility;
 }
 
 struct Type
@@ -42,6 +45,7 @@ struct Type
     string name;
     string declaration;
     Constant[] constants;
+    string visibility;
 }
 
 struct Routine
@@ -49,6 +53,7 @@ struct Routine
     string name;
     string type;
     string declaration;
+    string visibility;
 }
 
 struct Property
@@ -62,6 +67,7 @@ struct Property
     string stored;
     string type;
     string writer;
+    string visibility;
 }
 
 struct Ancestor
@@ -139,16 +145,26 @@ class SymbolCache
         throw new SymbolNotFoundException(symbolName);
     }
 
-    JSONValue[] getSymbolsJSON(SymbolCategory category, bool allowedOnly = true)
+    JSONValue[] getSymbolsJSON(SearchScope searchScope, SymbolCategory category, bool allowedOnly = true)
     {
         JSONValue[] results;
-        foreach(kv; _unitsCache[_unit].symbols.byKeyValue)
+
+        foreach(unitName; _unitsCache.keys)
         {
-            if (kv.value.category == category && (allowedOnly == false || kv.value.isAllowed))
+            if (searchScope == SearchScope.currentUnit && unitName != _unit)
             {
-                results ~= kv.value.jsSymbol;
+                continue;
+            }
+
+            foreach(kv; _unitsCache[unitName].symbols.byKeyValue)
+            {
+                if (kv.value.category == category && (allowedOnly == false || kv.value.isAllowed))
+                {
+                    results ~= kv.value.jsSymbol;
+                }
             }
         }
+
         return results;
     }
 
@@ -157,29 +173,29 @@ class SymbolCache
         return _unitsCache[_unit].uses;
     }
 
-    Constant[] getConstants(bool allowedOnly = true)
+    Constant[] getConstants(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.constant, allowedOnly).map!(js => toConstant(js)).array;
+        return getSymbolsJSON(searchScope, SymbolCategory.constant, allowedOnly).map!(js => toConstant(js)).array;
     }
 
     private Constant toConstant(JSONValue js)
     {
-        return Constant(js["_name"].str.decodeXmlString, js["_declaration"].str.decodeXmlString);
+        return Constant(js["_name"].str.decodeXmlString, js["_declaration"].str.decodeXmlString, js["_visibility"].str);
     }
 
-    Variable[] getVariables(bool allowedOnly = true)
+    Variable[] getVariables(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.variable, allowedOnly).map!(js => toVariable(js)).array;
+        return getSymbolsJSON(searchScope, SymbolCategory.variable, allowedOnly).map!(js => toVariable(js)).array;
     }
 
     private Variable toVariable(JSONValue js)
     {
-        return Variable(js["_name"].str.decodeXmlString, js["_declaration"].str.decodeXmlString);
+        return Variable(js["_name"].str.decodeXmlString, js["_declaration"].str.decodeXmlString, js["_visibility"].str);
     }
 
-    Routine[] getRoutines(bool allowedOnly = true)
+    Routine[] getRoutines(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.routine, allowedOnly).map!(js => toRoutine(js)).array;
+        return getSymbolsJSON(searchScope, SymbolCategory.routine, allowedOnly).map!(js => toRoutine(js)).array;
     }
 
     private Routine toRoutine(JSONValue jsRoutine)
@@ -187,21 +203,23 @@ class SymbolCache
         Routine routine = {
             name : jsRoutine["_name"].str.decodeXmlString,
             type : jsRoutine["_type"].str.decodeXmlString,
-            declaration: jsRoutine["_declaration"].str.decodeXmlString
+            declaration: jsRoutine["_declaration"].str.decodeXmlString,
+            visibility: jsRoutine["_visibility"].str
         };
         return routine;
     }
 
-    Type[] getTypes(bool allowedOnly = true)
+    Type[] getTypes(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.type, allowedOnly).map!(js => toType(js)).array;
+        return getSymbolsJSON(searchScope, SymbolCategory.type, allowedOnly).map!(js => toType(js)).array;
     }
 
     private Type toType(JSONValue jsType)
     {
         Type type = {
             name : jsType["_name"].str.decodeXmlString,
-            declaration: jsType["_declaration"].str.decodeXmlString
+            declaration: jsType["_declaration"].str.decodeXmlString,
+            visibility: jsType["_visibility"].str
         };
 
         if (("constant" in jsType) !is null)
@@ -218,16 +236,16 @@ class SymbolCache
         return Ancestor(js["_name"].str.decodeXmlString, js["_declaration"].str.decodeXmlString);
     }
 
-    Class[] getClasses(bool allowedOnly = true)
+    Class[] getClasses(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.structure, allowedOnly)
+        return getSymbolsJSON(searchScope, SymbolCategory.structure, allowedOnly)
             .filter!(js => js["_type"].str == "class").map!(js => toClass(js)).array;
     }
 
-    Class getClass(string className, bool allowedOnly = true)
+    Class getClass(SearchScope searchScope, string className, bool allowedOnly = true)
     {
-        auto arr = getSymbolsJSON(SymbolCategory.structure, allowedOnly)
-            .filter!(js => js["_type"].str == "class" && js["_name"].str == className).map!(js => toClass(js)).array;
+        auto arr = getSymbolsJSON(searchScope, SymbolCategory.structure, allowedOnly)
+            .filter!(js => js["_type"].str == "class" && js["_name"].str.toLower == className.toLower).map!(js => toClass(js)).array;
         if (arr.length == 0)
         {
             throw new SymbolNotFoundException(className);
@@ -277,9 +295,9 @@ class SymbolCache
         return class_;
     }
 
-    Interface_[] getInterfaces(bool allowedOnly = true)
+    Interface_[] getInterfaces(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.structure, allowedOnly)
+        return getSymbolsJSON(searchScope, SymbolCategory.structure, allowedOnly)
             .filter!(js => js["_type"].str == "interface").map!(js => toInterface(js)).array;
     }
 
@@ -320,9 +338,9 @@ class SymbolCache
         return interface_;
     }
 
-    Record[] getRecords(bool allowedOnly = true)
+    Record[] getRecords(SearchScope searchScope, bool allowedOnly = true)
     {
-        return getSymbolsJSON(SymbolCategory.structure, allowedOnly)
+        return getSymbolsJSON(searchScope, SymbolCategory.structure, allowedOnly)
             .filter!(js => js["_type"].str == "record").map!(js => toRecord(js)).array;
     }
 
@@ -356,6 +374,7 @@ class SymbolCache
             stored : jsProperty["_stored"].str.decodeXmlString,
             type : jsProperty["_type"].str.decodeXmlString,
             writer : jsProperty["_writer"].str.decodeXmlString,
+            visibility : jsProperty["_visibility"].str
         };
         
         return property;
@@ -369,6 +388,11 @@ class SymbolCache
     static string[] getUnits()
     {
         return _unitsCache.keys;
+    }
+
+    static setUnitsCache(UnitCache[string] unitsCache)
+    {
+        _unitsCache = unitsCache;
     }
 
     static loadSymbols(string specFolder)
@@ -466,7 +490,6 @@ class SymbolCache
                         symbol.isClass = true;
                     else if (jsStructure["_type"].str == "interface")
                         symbol.isInterface = true;
-
                     unitCache.symbols[structureLowerName] = symbol;
                 }
             }

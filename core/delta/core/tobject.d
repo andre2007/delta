@@ -1,6 +1,6 @@
 module delta.core.tobject;
 
-class TObject
+class DelphiObject
 {
 	protected ptrdiff_t _reference;
 	
@@ -9,24 +9,13 @@ class TObject
 		return _reference;
 	}
 
-	T opCast(T)() {
-        return new T(reference);
+	T opCast(T)()
+	{
+        return new T(_reference);
     }
-	
+
 	this(ptrdiff_t reference)
 	{
 		_reference = reference;
 	}
-
-	void Destroy()
-	{
-		
-	}
-
-	void BeforeDestruction()
-	{
-
-	}
-
-
 }
