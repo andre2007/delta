@@ -1,4 +1,4 @@
-module delta.core.tobject;
+module delta.core.delphiobject;
 
 class DelphiObject
 {

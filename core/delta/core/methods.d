@@ -59,6 +59,18 @@ mixin template PascalClass(string name)
 					{
 						setPropertyReference(_reference, __traits(identifier, method), (args[0] is null) ? 0 : args[0].reference);
 					}
+					else static if( isDelegate!(Parameters!method[0]))
+					{                            
+                        alias dlg = Parameters!method[0];
+                        static if (Parameters!dlg.length == 1 && is(Parameters!dlg[0] : Object))
+                        {
+                            setEventArgsRef(this, __traits(identifier, method), args[0].ptr, args[0].funcptr);
+                        }
+                        else
+                        {
+                            assert(false, "Not implemented");
+                        }
+					}
 					else assert(false, "Not implemented: " ~ __traits(identifier, method));
 				}
 			}
@@ -109,9 +121,24 @@ mixin template PascalClass(string name)
 						}
 						return _`~name~`;*/
 					}
-					else
+					else static if( isDelegate!(ReturnType!method))
+					{                            
+                        return null;
+                        /*alias dlg = Parameters!method[0];
+                        static if (Parameters!dlg.length == 1 && is(Parameters!dlg[0] : Object))
+                        {
+                            alias methodInstance = __traits(getOverloads, this, __traits(identifier, method))[0];
+                            setEventArgsRef(this, __traits(identifier, method), methodInstance.ptr, methodInstance.funcptr);
+                        }
+                        else
+                        {
+                            assert(false, "Not implemented");
+                        }*/
+					}
+                    else
 					{
-						static assert(false, "Not implemented: " ~ __traits(identifier, method));
+						assert(false, "Not implemented");
+						//static assert(false, "Not implemented: " ~ __traits(identifier, method));
 					} 
 				}
 			} else static assert(false, "Not implemented: " ~ __traits(identifier, method));
@@ -181,7 +208,11 @@ mixin template PascalClass(string name)
 					{
 						return executeClassMethodReturnStringArgsStringStringString(name, __traits(identifier, method), args[0], args[1], args[2]);
 					}
-					else static assert(false, "Not implemented: " ~ __traits(identifier, method) ); // ~ __traits(parent, method)
+					else 
+					{
+						assert(false, "Not implemented");
+						//static assert(false, "Not implemented: " ~ __traits(identifier, method) ); // ~ __traits(parent, method)
+					}
 				}
 			}
 			else
@@ -366,8 +397,11 @@ mixin template PascalClass(string name)
 						auto resultReference =  executeInstanceMethodReturnRefArgsStringBool(_reference, __traits(identifier, method), args[0], args[1]);
 						return new ReturnType!method(resultReference);
 					}
-
-					else static assert(false, "Not implemented: " ~ __traits(identifier, method));
+					else
+					{
+						assert(false, "Not implemented");
+						// static assert(false, "Not implemented: " ~ __traits(identifier, method));
+					} 
 				}
 				
 				
@@ -379,7 +413,6 @@ mixin template PascalClass(string name)
 				executeInstanceMethodReturnNoneArgsRefStructStructFloatBoolean
 				executeInstanceMethodReturnNoneArgsRefFloat
 				executeInstanceMethodReturnNoneArgsFloatFloatFloatFloatFloat
-				executeInstanceMethodReturnRefArgsString
 				*/
 			}
 		}
@@ -396,7 +429,6 @@ mixin template PascalClass(string name)
 	{
 		super(obj.reference);
 	}
-
 
 	static foreach(memberName; __traits(derivedMembers, typeof(this))) {
 		static if(isSomeFunction!(__traits(getMember, typeof(this), memberName)))
@@ -416,10 +448,6 @@ mixin template PascalClass(string name)
 		}
 	}
 }
-
-
-
-
 
 void executeInstanceMethodReturnNoneArgsNone(ptrdiff_t reference, string name)
 {
@@ -485,7 +513,7 @@ bool executeInstanceMethodReturnBoolArgsInt(ptrdiff_t reference, string name, in
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsInt");
 	auto fn = cast(FN) fp;
-	return fn(reference, pCharName, b);
+	return fn(reference, pCharName, i);
 }
 
 bool executeInstanceMethodReturnBoolArgsFloatFloat(ptrdiff_t reference, string name, float f1, float f2)
