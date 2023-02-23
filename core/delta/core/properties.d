@@ -6,7 +6,7 @@ import std.utf: toUTFz, encode;
 import std.conv: to;
 import std.algorithm: each;
 
-import delta.core.dll, delta.core.tobject;
+import delta.core.dll, delta.core.delphiobject;
 
 template GenEnumProperty(string name, alias EnumType, bool read = true, bool write = true)
 {
@@ -113,10 +113,10 @@ template GenStructProperty(string name, alias structType, bool read = true, bool
 // TODO: IS index == size_t ?
 struct IntegerArrayProperty(BaseType)
 {
-	private TObject _obj;
+	private DelphiObject _obj;
 	private string _propertyName;
 	
-	this(TObject obj, string propertyName) 
+	this(DelphiObject obj, string propertyName) 
 	{ 
 		_obj = obj; 
 		_propertyName = propertyName;

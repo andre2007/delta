@@ -14,6 +14,7 @@ struct Symbol
     bool isInterface;
     bool isRoutine;
     
+    string name;
     string unit;
     SymbolCategory category;
     JSONValue jsSymbol;
@@ -446,9 +447,9 @@ class SymbolCache
 
                 foreach(jsConstant; jsConstants.array)
                 {
-                    string constantLowerName = jsConstant["_name"].str.toLower;
-                    Symbol symbol = { isConstant: true, category : SymbolCategory.constant, unit : unitName, jsSymbol : jsConstant, isAllowed : allowedConstants.canFind(constantLowerName) };
-                    unitCache.symbols[constantLowerName] = symbol;
+                    string constantName = jsConstant["_name"].str;
+                    Symbol symbol = { name: constantName, isConstant: true, category : SymbolCategory.constant, unit : unitName, jsSymbol : jsConstant, isAllowed : allowedConstants.canFind(constantName.toLower) };
+                    unitCache.symbols[constantName.toLower] = symbol;
                 }
             }
 
@@ -462,9 +463,9 @@ class SymbolCache
 
                 foreach(jsRoutine; jsRoutines.array)
                 {
-                    string routineLowerName = jsRoutine["_name"].str.toLower;
-                    Symbol symbol = { isRoutine: true, category : SymbolCategory.routine, unit : unitName, jsSymbol : jsRoutine, isAllowed : allowedRoutines.canFind(routineLowerName) };
-                    unitCache.symbols[routineLowerName] = symbol;
+                    string routineName = jsRoutine["_name"].str;
+                    Symbol symbol = { name: routineName, isRoutine: true, category : SymbolCategory.routine, unit : unitName, jsSymbol : jsRoutine, isAllowed : allowedRoutines.canFind(routineName.toLower) };
+                    unitCache.symbols[routineName.toLower] = symbol;
                 }
             }
 
@@ -483,14 +484,14 @@ class SymbolCache
 
                 foreach(jsStructure; jsStructures.array)
                 {
-                    string structureLowerName = jsStructure["_name"].str.toLower;
-                    Symbol symbol = { category : SymbolCategory.structure, unit : unitName, jsSymbol : jsStructure, isAllowed : allowedStructures.canFind(structureLowerName) };
+                    string structureName = jsStructure["_name"].str;
+                    Symbol symbol = { name: structureName, category : SymbolCategory.structure, unit : unitName, jsSymbol : jsStructure, isAllowed : allowedStructures.canFind(structureName.toLower) };
                     
                     if (jsStructure["_type"].str == "class")
                         symbol.isClass = true;
                     else if (jsStructure["_type"].str == "interface")
                         symbol.isInterface = true;
-                    unitCache.symbols[structureLowerName] = symbol;
+                    unitCache.symbols[structureName.toLower] = symbol;
                 }
             }
 
@@ -509,11 +510,11 @@ class SymbolCache
 
                 foreach(jsType; jsTypes.array)
                 {
-                    string typeLowerName = jsType["_name"].str.toLower;
-                    Symbol symbol = { category : SymbolCategory.type, unit : unitName, jsSymbol : jsType, isAllowed : allowedTypes.canFind(typeLowerName) };
+                    string typeName = jsType["_name"].str;
+                    Symbol symbol = { name: typeName, category : SymbolCategory.type, unit : unitName, jsSymbol : jsType, isAllowed : allowedTypes.canFind(typeName.toLower) };
                     if (jsType["_declaration"].str.toLower.canFind("= class of "))
                         symbol.isMetaClass = true;
-                    unitCache.symbols[typeLowerName] = symbol;
+                    unitCache.symbols[typeName.toLower] = symbol;
                 }
             }
 
@@ -527,9 +528,9 @@ class SymbolCache
 
                 foreach(jsVariable; jsVariables.array)
                 {
-                    string variableLowerName = jsVariable["_name"].str.toLower;
-                    Symbol symbol = { category : SymbolCategory.variable, unit : unitName, jsSymbol : jsVariable, isAllowed : allowedVariables.canFind(variableLowerName) };
-                    unitCache.symbols[variableLowerName] = symbol;
+                    string variableName = jsVariable["_name"].str;
+                    Symbol symbol = { name: variableName, category : SymbolCategory.variable, unit : unitName, jsSymbol : jsVariable, isAllowed : allowedVariables.canFind(variableName.toLower) };
+                    unitCache.symbols[variableName.toLower] = symbol;
                 }
             }
 

@@ -27,10 +27,11 @@ class DClassGenerator
 		_symbolCache = SymbolCache.getSymbolCache(_unitName);
     }
 
-    private void _validateSymbol(string symbolName)
+    private string _validateSymbol(string symbolName)
     {
         Symbol symbol = _symbolCache.getSymbol(symbolName);
         enforce!MetaClassException(!symbol.isMetaClass);
+        return symbol.name;
     }
 
     DClassGenerator add(string[] s...)
@@ -41,17 +42,17 @@ class DClassGenerator
 
     string generateClassSourceCode(Class class_)
     {
-        string ancestorClass;
-        string[] ancestorInterfaces;
+        Ancestor ancestorClass;
+        Ancestor[] ancestorInterfaces;
 
         foreach(ancestor; class_.ancestors)
         {
             try
             {
                 if (_symbolCache.getSymbol(ancestor.name).isClass)
-                    ancestorClass = ancestor.name;
+                    ancestorClass = ancestor;
                 else
-                    ancestorInterfaces ~= ancestor.name;
+                    ancestorInterfaces ~= ancestor;
             }
             catch (SymbolNotFoundException)
             {
@@ -63,21 +64,36 @@ class DClassGenerator
             }
         }
 
+        string genericId;
+        if (class_.name != class_.nameWithGeneric)
+        {
+            genericId = class_.nameWithGeneric[class_.nameWithGeneric.countUntil("<") + 1..class_.nameWithGeneric.countUntil(">")];
+        }
+
         if (class_.name == "TObject")
             add(`class ` ~ class_.name ~ ` : DelphiObject {`);
         else
-            add(`class ` ~ class_.name ~ (ancestorClass ? ` : ` ~ ancestorClass : ``), `{`);
-
+        {
+            string ancestorClassStr = ancestorClass.name;
+            if (ancestorClass.name != ancestorClass.declaration)
+            {
+                string genericParameter = ancestorClass.declaration[ancestorClass.declaration.countUntil("<") + 1 .. ancestorClass.declaration.countUntil(">")];
+                ancestorClassStr = ancestorClass.name ~ "!" ~ genericParameter;
+            }
+            
+            add(`class ` ~ class_.name ~ (genericId ? `(` ~ genericId ~ `)` : ``) ~ (ancestorClassStr ? ` : ` ~ ancestorClassStr : ``), ` {`);
+        }
+        
         add(`mixin PascalClass!("` ~ _unitName ~ `.` ~ class_.name ~ `");`);
 
         foreach(routine; class_.routines)
         {
-            add(_routineToDDeclaration(class_.name, routine));
+            add(_routineToDDeclaration(class_.name, routine, genericId));
         }
 
         foreach(property; class_.properties)
         {
-            add(_propertyToDDeclaration(property, ancestorClass));
+            add(_propertyToDDeclaration(property, ancestorClass.name));
         }
 
         add(`}`, ``);
@@ -107,9 +123,6 @@ class DClassGenerator
                 return "// " ~ to!string(property);
         }
 
-        
-        
-
         string[] result;
 
         if (propertyModel.hasRead)
@@ -122,11 +135,21 @@ class DClassGenerator
             result ~= `@property ` ~ (propertyModel.visibility == "protected" ? "protected " : "") ~ (propertyModel.isOverrideWrite ? "override " : "") ~ `void ` ~ propertyModel.name ~ `(` ~ propertyModel.type ~ ` value);`;
         }
 
+        if (propertyModel.isOverrideRead || propertyModel.isOverrideWrite)
+        {
+            result ~= ` alias ` ~ propertyModel.name ~ ` = typeof(super).` ~ propertyModel.name ~ `;`;
+        }
+
         return result.join("\n");
     }
     
-    private string _routineToDDeclaration(string className, Routine routine)
+    private string _routineToDDeclaration(string className, Routine routine, string genericId)
     {
+        if (routine.name.canFind("."))
+        {
+            return "//" ~ routine.declaration;
+        }
+        
         auto argsStart = routine.declaration.countUntil("(");
         auto argsEnd = routine.declaration.countUntil(")");
         string dArgs;
@@ -163,7 +186,7 @@ class DClassGenerator
                     string dArgType;
 					try
 					{
-						dArgType = toDArgType(delphiArgType);
+						dArgType = toDArgType(delphiArgType, genericId);
 					}
 					catch (MetaClassException)
 					{
@@ -206,6 +229,7 @@ class DClassGenerator
         string returnType;
         bool isStatic;
         bool isOverride = routine.declaration.toLower.canFind(`override;`);
+        bool isReintroduce = routine.declaration.toLower.canFind(`reintroduce;`);
         string routineName = routine.name;
         if (routine.type == "procedure")
         {
@@ -223,7 +247,7 @@ class DClassGenerator
                 string[] semiColonArr = colonsArr[$-1].split(";");
                 try
                 {
-                    returnType = toDArgType(semiColonArr[0].strip);
+                    returnType = toDArgType(semiColonArr[0].strip, genericId);
                 }
                 catch (SymbolNotFoundException)
                 {
@@ -246,21 +270,22 @@ class DClassGenerator
         else if (routine.type == "constructor")
         {
             isStatic = true;
-            returnType = className;
-            
-            /*
-            returnType = "";
-            isStatic = false;
             isOverride = false;
-            routineName = "this";
-            */
+            returnType = className;
         }
         else if (routine.type == "destructor")
         {
             returnType = "void";
         }
 
-        return (isStatic ? "static " : "") ~ (routine.visibility == "protected" ? "protected " : "") ~ (isOverride ? "override " : "") ~ returnType ~ " " ~ routineName ~ "(" ~ dArgs ~ ");";
+        string overloadSet;
+        if (isOverride || isReintroduce)
+        {
+            overloadSet = ` alias ` ~ routine.name ~ ` = typeof(super).` ~ routine.name ~ `;`;
+        }
+
+        return (isStatic ? "static " : "") ~ (routine.visibility == "protected" ? "protected " : "") ~ (isOverride ? "override " : "") ~ returnType ~ " " ~ routineName ~ "(" ~ dArgs ~ ");" 
+            ~ overloadSet;
     }
 
     private string _getAncestorClassName(Ancestor[] ancestors)
@@ -284,17 +309,25 @@ class DClassGenerator
         return "";
     }
 
-    private string toDArgType(string delphiArgType)
+    private string toDArgType(string delphiArgType, string genericId)
     {
         if (delphiArgType.startsWith("array of "))
         {
-            return toDArgType(delphiArgType[9..$]~"[]");
+            return toDArgType(delphiArgType[9..$]~"[]", genericId);
+        }
+        
+        if (delphiArgType == genericId)
+        {
+            return genericId;
         }
 
         auto genericStartPos = delphiArgType.countUntil("<");
         if (genericStartPos > 0)
         {
-            return delphiArgType[0..genericStartPos] ~ "!" ~ toDArgType(delphiArgType[genericStartPos+1..$-1]);
+            string genericBaseClass = delphiArgType[0..genericStartPos];
+            _validateSymbol(genericBaseClass);
+            string genericParameter = toDArgType(delphiArgType[genericStartPos+1..$-1], genericId);
+            return genericBaseClass ~ "!" ~ genericParameter;
         }
 
         switch(delphiArgType.toLower)
@@ -311,11 +344,12 @@ class DClassGenerator
                 return "ushort";
             case "single":
                 return "float";
+            case "char":
+                return "char";
             case "widechar":
                 return "dchar";
             default:
-                _validateSymbol(delphiArgType);
-                return delphiArgType; // Assuming it is a class
+                return _validateSymbol(delphiArgType); // Assuming it is a class
         }
     }
 
@@ -328,6 +362,7 @@ class DClassGenerator
         {
             auto ancestorClass = _symbolCache.getClass(SearchScope.usedUnits, currentAncestorClassName);
             auto arr = ancestorClass.properties.filter!(p => p.name.toLower == property.name.toLower).array;
+
             if (arr.length == 1)
             {
                 auto parentProperty = arr[0];
@@ -387,8 +422,7 @@ class DClassGenerator
             default:
                 try
                 {
-                    _validateSymbol(property.type);
-                    model.type = property.type;
+                    model.type = _validateSymbol(property.type);
                 }
                 catch (MetaClassException)
                 {
