@@ -4,65 +4,65 @@ interface
 
 uses SysUtils, Classes, Rtti, TypInfo;
 
-procedure setPropertyValue(const Reference: NativeInt; const AName: string;
+procedure setPropertyValue(Reference: Pointer; const AName: string;
   const value: TValue);
 
-function getPropertyReference(const Reference: NativeInt; const AName: PAnsiChar)
-  : NativeInt; stdcall;
+function getPropertyReference(Reference: Pointer; const AName: PAnsiChar)
+  : Pointer; stdcall;
 
-function getPropertyStruct(const Reference: NativeInt; const AName: PAnsiChar)
-  : NativeInt; stdcall;
+function getPropertyStruct(Reference: Pointer; const AName: PAnsiChar)
+  : Pointer; stdcall;
 
-procedure setPropertyReference(const Reference: NativeInt; const AName: PAnsiChar;
-  const value: NativeInt); stdcall;
+procedure setPropertyReference(Reference: Pointer; const AName: PAnsiChar;
+  value: Pointer); stdcall;
 
-procedure setPropertyBoolean(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyBoolean(Reference: Pointer; const AName: PAnsiChar;
   const value: Boolean); stdcall;
 
-function getPropertyBool(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertyBool(Reference: Pointer; const AName: PAnsiChar)
   : Boolean; stdcall;
 
-procedure setPropertySmallInt(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertySmallInt(Reference: Pointer; const AName: PAnsiChar;
   const value: SmallInt); stdcall;
 
-function getPropertySmallInt(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertySmallInt(Reference: Pointer; const AName: PAnsiChar)
   : SmallInt; stdcall;
 
-procedure setPropertyInteger(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyInteger(Reference: Pointer; const AName: PAnsiChar;
   const value: Integer); stdcall;
 
-function getPropertyInteger(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertyInteger(Reference: Pointer; const AName: PAnsiChar)
   : Integer; stdcall;
 
-procedure setPropertyCardinal(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyCardinal(Reference: Pointer; const AName: PAnsiChar;
   const value: Cardinal); stdcall;
 
-function getPropertyCardinal(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertyCardinal(Reference: Pointer; const AName: PAnsiChar)
   : Cardinal; stdcall;
 
-procedure setPropertySingle(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertySingle(Reference: Pointer; const AName: PAnsiChar;
   const value: Single); stdcall;
 
-function getPropertySingle(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertySingle(Reference: Pointer; const AName: PAnsiChar)
   : Single; stdcall;
 
-procedure setPropertyString(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyString(Reference: Pointer; const AName: PAnsiChar;
   const value: WideString); stdcall;
 
-procedure getPropertyString(const Reference: NativeInt; const AName: PAnsiChar;
+procedure getPropertyString(Reference: Pointer; const AName: PAnsiChar;
   out value: WideString); stdcall;
 
-procedure setPropertyEnum(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyEnum(Reference: Pointer; const AName: PAnsiChar;
   const value: PAnsiChar); stdcall;
 
-procedure getPropertyEnum(const Reference: NativeInt; const AName: PAnsiChar;
+procedure getPropertyEnum(Reference: Pointer; const AName: PAnsiChar;
   out value: WideString); stdcall;
 
-procedure setPropertySet(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertySet(Reference: Pointer; const AName: PAnsiChar;
   const value: PAnsiChar); stdcall;
 
-function getIntegerIndexedPropertyReference(const Reference: NativeInt;
-  const AName: PAnsiChar; const Index: Integer): NativeInt; stdcall;
+function getIntegerIndexedPropertyReference(Reference: Pointer;
+  const AName: PAnsiChar; const Index: Integer): Pointer; stdcall;
 
 exports setPropertyEnum, getPropertyEnum, setPropertySet, setPropertyReference,
   setPropertySmallInt, getPropertySmallInt, setPropertyInteger,
@@ -73,7 +73,7 @@ exports setPropertyEnum, getPropertyEnum, setPropertySet, setPropertyReference,
 
 implementation
 
-procedure setPropertyValue(const Reference: NativeInt; const AName: string;
+procedure setPropertyValue(Reference: Pointer; const AName: string;
   const value: TValue);
 var
   context: TRttiContext;
@@ -97,7 +97,7 @@ begin
   end;
 end;
 
-function getPropertyValue(const Reference: NativeInt;
+function getPropertyValue(Reference: Pointer;
   const AName: string): TValue;
 var
   context: TRttiContext;
@@ -121,7 +121,7 @@ begin
   end;
 end;
 
-function getIndexedPropertyValue(const Reference: NativeInt; const AName: string;
+function getIndexedPropertyValue(Reference: Pointer; const AName: string;
   const Index: Integer): TValue;
 var
   context: TRttiContext;
@@ -145,73 +145,73 @@ begin
   end;
 end;
 
-procedure setPropertySmallInt(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertySmallInt(Reference: Pointer; const AName: PAnsiChar;
   const value: SmallInt); stdcall;
 begin
   setPropertyValue(Reference, string(AName), value);
 end;
 
-function getPropertySmallInt(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertySmallInt(Reference: Pointer; const AName: PAnsiChar)
   : SmallInt; stdcall;
 begin
   result := getPropertyValue(Reference, string(AName)).AsType<SmallInt>;
 end;
 
-procedure setPropertyInteger(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyInteger(Reference: Pointer; const AName: PAnsiChar;
   const value: Integer); stdcall;
 begin
   setPropertyValue(Reference, string(AName), value);
 end;
 
-function getPropertyInteger(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertyInteger(Reference: Pointer; const AName: PAnsiChar)
   : Integer; stdcall;
 begin
   result := getPropertyValue(Reference, string(AName)).AsInteger;
 end;
 
-procedure setPropertyBoolean(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyBoolean(Reference: Pointer; const AName: PAnsiChar;
   const value: Boolean); stdcall;
 begin
   setPropertyValue(Reference, string(AName), value);
 end;
 
-function getPropertyBool(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertyBool(Reference: Pointer; const AName: PAnsiChar)
   : Boolean; stdcall;
 begin
   result := getPropertyValue(Reference, string(AName)).AsBoolean;
 end;
 
-procedure setPropertySingle(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertySingle(Reference: Pointer; const AName: PAnsiChar;
   const value: Single); stdcall;
 begin
   setPropertyValue(Reference, string(AName), value);
 end;
 
-function getPropertySingle(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertySingle(Reference: Pointer; const AName: PAnsiChar)
   : Single; stdcall;
 begin
   result := getPropertyValue(Reference, string(AName)).AsType<Single>;
 end;
 
-procedure setPropertyCardinal(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyCardinal(Reference: Pointer; const AName: PAnsiChar;
   const value: Cardinal); stdcall;
 begin
   setPropertyValue(Reference, string(AName), value);
 end;
 
-function getPropertyCardinal(const Reference: NativeInt; const AName: PAnsiChar)
+function getPropertyCardinal(Reference: Pointer; const AName: PAnsiChar)
   : Cardinal; stdcall;
 begin
   result := getPropertyValue(Reference, string(AName)).AsType<Cardinal>;
 end;
 
-procedure setPropertyString(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyString(Reference: Pointer; const AName: PAnsiChar;
   const value: WideString); stdcall;
 begin
   setPropertyValue(Reference, string(AName), string(value));
 end;
 
-procedure getPropertyString(const Reference: NativeInt; const AName: PAnsiChar;
+procedure getPropertyString(Reference: Pointer; const AName: PAnsiChar;
   out value: WideString); stdcall;
 var
   s: String;
@@ -220,7 +220,7 @@ begin
   value := s;
 end;
 
-procedure setPropertyEnum(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertyEnum(Reference: Pointer; const AName: PAnsiChar;
   const value: PAnsiChar); stdcall;
 var
   context: TRttiContext;
@@ -243,7 +243,7 @@ begin
   end;
 end;
 
-procedure getPropertyEnum(const Reference: NativeInt; const AName: PAnsiChar;
+procedure getPropertyEnum(Reference: Pointer; const AName: PAnsiChar;
   out value: WideString); stdcall;
 var
   s: String;
@@ -252,7 +252,7 @@ begin
   value := s;
 end;
 
-procedure setPropertySet(const Reference: NativeInt; const AName: PAnsiChar;
+procedure setPropertySet(Reference: Pointer; const AName: PAnsiChar;
   const value: PAnsiChar); stdcall;
 var
   context: TRttiContext;
@@ -275,38 +275,38 @@ begin
   end;
 end;
 
-procedure setPropertyReference(const Reference: NativeInt; const AName: PAnsiChar;
-  const value: NativeInt); stdcall;
+procedure setPropertyReference(Reference: Pointer; const AName: PAnsiChar;
+  value: Pointer); stdcall;
 var
   obj: TObject;
 begin
-  if value = -1 then
+  if value = nil then
     obj := nil
   else
     obj := TObject(value);
   setPropertyValue(Reference, string(AName), obj);
 end;
 
-function getPropertyReference(const Reference: NativeInt; const AName: PAnsiChar)
-  : NativeInt; stdcall;
+function getPropertyReference(Reference: Pointer; const AName: PAnsiChar)
+  : Pointer; stdcall;
 begin
-  result := NativeInt(getPropertyValue(Reference, string(AName)).AsObject);
+  result := getPropertyValue(Reference, string(AName)).AsObject;
 end;
 
-function getIntegerIndexedPropertyReference(const Reference: NativeInt;
-  const AName: PAnsiChar; const Index: Integer): NativeInt; stdcall;
+function getIntegerIndexedPropertyReference(Reference: Pointer;
+  const AName: PAnsiChar; const Index: Integer): Pointer; stdcall;
 begin
-  result := NativeInt(getIndexedPropertyValue(Reference, string(AName), Index)
-    .AsObject);
+  result := getIndexedPropertyValue(Reference, string(AName), Index)
+    .AsObject;
 end;
 
-function getPropertyStruct(const Reference: NativeInt; const AName: PAnsiChar)
-  : NativeInt; stdcall;
+function getPropertyStruct(Reference: Pointer; const AName: PAnsiChar)
+  : Pointer; stdcall;
 var
   value: TValue;
 begin
   value := getPropertyValue(Reference, string(AName));
-  result := NativeInt(value.GetReferenceToRawData());
+  result := value.GetReferenceToRawData();
 end;
 
 end.

@@ -57,7 +57,7 @@ mixin template PascalClass(string name)
 					}
 					else static if(is(Parameters!method[0] : Object))
 					{
-						setPropertyReference(_reference, __traits(identifier, method), (args[0] is null) ? 0 : args[0].reference);
+						setPropertyReference(_reference, __traits(identifier, method), (args[0] is null) ? null : args[0].reference);
 					}
 					else static if( isDelegate!(Parameters!method[0]))
 					{                            
@@ -105,8 +105,8 @@ mixin template PascalClass(string name)
 					}
 					else static if(is(ReturnType!method : Object))
 					{
-						auto r = cast(ptrdiff_t) cast(void*) getPropertyReference(_reference, __traits(identifier, method));
-						if (r == 0)
+						auto r = cast(void*) getPropertyReference(_reference, __traits(identifier, method));
+						if (r is null)
 							return null;
 						else 
 							return new ReturnType!method(r);
@@ -153,7 +153,7 @@ mixin template PascalClass(string name)
 					//	executeClassMethodReturnRefArgsRef
 					static if(is(ReturnType!method : Object) && args.length == 1 && is(typeof(args[0]) : Object))
 					{
-						auto arg0Reference = args[0] is null ? nil : args[0].reference;
+						auto arg0Reference = args[0] is null ? null : args[0].reference;
 						auto resultReference = executeClassMethodReturnRefArgsRef(name, __traits(identifier, method), arg0Reference);
 						return new ReturnType!method(resultReference);
 					} 
@@ -172,7 +172,7 @@ mixin template PascalClass(string name)
 					// executeClassMethodReturnRefArgsRefNativeInt
 					else static if(is(ReturnType!method : Object) && args.length == 2 && is(typeof(args[0]) : Object) && is(typeof(args[1]) == ptrdiff_t))
 					{
-						auto arg0Reference = args[0] is null ? nil : args[0].reference;
+						auto arg0Reference = args[0] is null ? null : args[0].reference;
 						auto resultReference = executeClassMethodReturnRefArgsRefNativeInt(name, __traits(identifier, method), arg0Reference, args[1]);
 						return new ReturnType!method(resultReference);
 					}
@@ -197,9 +197,9 @@ mixin template PascalClass(string name)
 					else static if(is(ReturnType!method : Object) && args.length == 4 
 						&& is(typeof(args[0]) : Object) && is(typeof(args[1]) : Object) && is(typeof(args[2]) : Object) && is(typeof(args[3]) == bool))
 					{
-						auto arg0Reference = args[0] is null ? nil : args[0].reference;
-						auto arg1Reference = args[1] is null ? nil : args[1].reference;
-						auto arg2Reference = args[2] is null ? nil : args[2].reference;
+						auto arg0Reference = args[0] is null ? null : args[0].reference;
+						auto arg1Reference = args[1] is null ? null : args[1].reference;
+						auto arg2Reference = args[2] is null ? null : args[2].reference;
 						auto resultReference = executeClassMethodReturnRefArgsRefRefRefBool(name, __traits(identifier, method), arg0Reference, arg1Reference, arg2Reference, args[3]);
 						return new ReturnType!method(resultReference);
 					}
@@ -420,7 +420,7 @@ mixin template PascalClass(string name)
 	
 	import std.traits;
 	
-	this(ptrdiff_t reference)
+	this(void* reference)
 	{
 		super(reference);
 	}
@@ -449,9 +449,9 @@ mixin template PascalClass(string name)
 	}
 }
 
-void executeInstanceMethodReturnNoneArgsNone(ptrdiff_t reference, string name)
+void executeInstanceMethodReturnNoneArgsNone(void* reference, string name)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*) FN;
+	alias extern(Windows) void function(void*, char*) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsNone");
@@ -459,9 +459,9 @@ void executeInstanceMethodReturnNoneArgsNone(ptrdiff_t reference, string name)
 	fn(reference, pChar);
 }
 
-string executeInstanceMethodReturnEnumArgsNone(ptrdiff_t reference, string name)
+string executeInstanceMethodReturnEnumArgsNone(void* reference, string name)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, out BSTR) FN;
+	alias extern(Windows) void function(void*, char*, out BSTR) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnEnumArgsNone");
@@ -476,9 +476,9 @@ string executeInstanceMethodReturnEnumArgsNone(ptrdiff_t reference, string name)
 	return s;
 }
 
-int executeInstanceMethodReturnIntArgsNone(ptrdiff_t reference, string name)
+int executeInstanceMethodReturnIntArgsNone(void* reference, string name)
 {
-	alias extern(Windows) int function(ptrdiff_t, char*) FN;
+	alias extern(Windows) int function(void*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnIntArgsNone");
@@ -486,9 +486,9 @@ int executeInstanceMethodReturnIntArgsNone(ptrdiff_t reference, string name)
 	return fn(reference, pCharName);
 }
 
-bool executeInstanceMethodReturnBoolArgsNone(ptrdiff_t reference, string name)
+bool executeInstanceMethodReturnBoolArgsNone(void* reference, string name)
 {
-	alias extern(Windows) bool function(ptrdiff_t, char*) FN;
+	alias extern(Windows) bool function(void*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsNone");
@@ -496,9 +496,9 @@ bool executeInstanceMethodReturnBoolArgsNone(ptrdiff_t reference, string name)
 	return fn(reference, pCharName);
 }
 
-bool executeInstanceMethodReturnBoolArgsBool(ptrdiff_t reference, string name, bool b)
+bool executeInstanceMethodReturnBoolArgsBool(void* reference, string name, bool b)
 {
-	alias extern(Windows) bool function(ptrdiff_t, char*, bool) FN;
+	alias extern(Windows) bool function(void*, char*, bool) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsBool");
@@ -506,9 +506,9 @@ bool executeInstanceMethodReturnBoolArgsBool(ptrdiff_t reference, string name, b
 	return fn(reference, pCharName, b);
 }
 
-bool executeInstanceMethodReturnBoolArgsInt(ptrdiff_t reference, string name, int i)
+bool executeInstanceMethodReturnBoolArgsInt(void* reference, string name, int i)
 {
-	alias extern(Windows) bool function(ptrdiff_t, char*, int) FN;
+	alias extern(Windows) bool function(void*, char*, int) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsInt");
@@ -516,9 +516,9 @@ bool executeInstanceMethodReturnBoolArgsInt(ptrdiff_t reference, string name, in
 	return fn(reference, pCharName, i);
 }
 
-bool executeInstanceMethodReturnBoolArgsFloatFloat(ptrdiff_t reference, string name, float f1, float f2)
+bool executeInstanceMethodReturnBoolArgsFloatFloat(void* reference, string name, float f1, float f2)
 {
-	alias extern(Windows) bool function(ptrdiff_t, char*, float, float) FN;
+	alias extern(Windows) bool function(void*, char*, float, float) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsFloatFloat");
@@ -526,9 +526,9 @@ bool executeInstanceMethodReturnBoolArgsFloatFloat(ptrdiff_t reference, string n
 	return fn(reference, pCharName, f1, f2);
 }
 
-bool executeInstanceMethodReturnBoolArgsRef(ptrdiff_t reference, string name, ptrdiff_t reference2)
+bool executeInstanceMethodReturnBoolArgsRef(void* reference, string name, void* reference2)
 {
-	alias extern(Windows) bool function(ptrdiff_t, char*, ptrdiff_t) FN;
+	alias extern(Windows) bool function(void*, char*, void*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnBoolArgsRef");
@@ -536,9 +536,9 @@ bool executeInstanceMethodReturnBoolArgsRef(ptrdiff_t reference, string name, pt
 	return fn(reference, pCharName, reference2);
 }
 
-int executeInstanceMethodReturnIntArgsString(ptrdiff_t reference, string name, string value)
+int executeInstanceMethodReturnIntArgsString(void* reference, string name, string value)
 {
-	alias extern(Windows) int function(ptrdiff_t, char*, char*) FN;
+	alias extern(Windows) int function(void*, char*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
 	
@@ -547,9 +547,9 @@ int executeInstanceMethodReturnIntArgsString(ptrdiff_t reference, string name, s
 	return fn(reference, pCharName, pCharValue);
 }
 
-void executeInstanceMethodReturnNoneArgsString(ptrdiff_t reference, string name, string value)
+void executeInstanceMethodReturnNoneArgsString(void* reference, string name, string value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, char*) FN;
+	alias extern(Windows) void function(void*, char*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
 	
@@ -558,9 +558,9 @@ void executeInstanceMethodReturnNoneArgsString(ptrdiff_t reference, string name,
 	fn(reference, pCharName, pCharValue);
 }
 
-void executeInstanceMethodReturnNoneArgsBool(ptrdiff_t reference, string name, bool value)
+void executeInstanceMethodReturnNoneArgsBool(void* reference, string name, bool value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, bool) FN;
+	alias extern(Windows) void function(void*, char*, bool) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsBool");
@@ -568,9 +568,9 @@ void executeInstanceMethodReturnNoneArgsBool(ptrdiff_t reference, string name, b
 	fn(reference, pCharName, value);
 }
 
-void executeInstanceMethodReturnNoneArgsBoolBool(ptrdiff_t reference, string name, bool b1, bool b2)
+void executeInstanceMethodReturnNoneArgsBoolBool(void* reference, string name, bool b1, bool b2)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, bool, bool) FN;
+	alias extern(Windows) void function(void*, char*, bool, bool) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsBoolBool");
@@ -578,9 +578,9 @@ void executeInstanceMethodReturnNoneArgsBoolBool(ptrdiff_t reference, string nam
 	fn(reference, pCharName, b1, b2);
 }
 
-void executeInstanceMethodReturnNoneArgsInt(ptrdiff_t reference, string name, int value)
+void executeInstanceMethodReturnNoneArgsInt(void* reference, string name, int value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, int) FN;
+	alias extern(Windows) void function(void*, char*, int) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsInt");
@@ -588,9 +588,9 @@ void executeInstanceMethodReturnNoneArgsInt(ptrdiff_t reference, string name, in
 	fn(reference, pCharName, value);
 }
 
-void executeInstanceMethodReturnNoneArgsIntRef(ptrdiff_t reference, string name, int value, ptrdiff_t reference2)
+void executeInstanceMethodReturnNoneArgsIntRef(void* reference, string name, int value, void* reference2)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, int, ptrdiff_t) FN;
+	alias extern(Windows) void function(void*, char*, int, void*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsIntRef");
@@ -598,9 +598,9 @@ void executeInstanceMethodReturnNoneArgsIntRef(ptrdiff_t reference, string name,
 	fn(reference, pCharName, value, reference2);
 }
 
-void executeInstanceMethodReturnNoneArgsFloat(ptrdiff_t reference, string name, float value)
+void executeInstanceMethodReturnNoneArgsFloat(void* reference, string name, float value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, float) FN;
+	alias extern(Windows) void function(void*, char*, float) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsFloat");
@@ -608,9 +608,9 @@ void executeInstanceMethodReturnNoneArgsFloat(ptrdiff_t reference, string name, 
 	fn(reference, pCharName, value);
 }
 
-void executeInstanceMethodReturnNoneArgsFloatFloatBool(ptrdiff_t reference, string name, float f1, float f2, bool b)
+void executeInstanceMethodReturnNoneArgsFloatFloatBool(void* reference, string name, float f1, float f2, bool b)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, float, float, bool) FN;
+	alias extern(Windows) void function(void*, char*, float, float, bool) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsFloatFloatBool");
@@ -618,9 +618,9 @@ void executeInstanceMethodReturnNoneArgsFloatFloatBool(ptrdiff_t reference, stri
 	fn(reference, pCharName, f1, f2, b);
 }
 
-ptrdiff_t executeInstanceMethodReturnRefArgsNone(ptrdiff_t reference, string name)
+void* executeInstanceMethodReturnRefArgsNone(void* reference, string name)
 {
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*) FN;
+	alias extern(Windows) void* function(void*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnRefArgsNone");
@@ -628,9 +628,9 @@ ptrdiff_t executeInstanceMethodReturnRefArgsNone(ptrdiff_t reference, string nam
 	return fn(reference, pCharName);
 }
 
-ptrdiff_t executeInstanceMethodReturnRefArgsInt(ptrdiff_t reference, string name, int i)
+void* executeInstanceMethodReturnRefArgsInt(void* reference, string name, int i)
 {
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*, int) FN;
+	alias extern(Windows) void* function(void*, char*, int) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnRefArgsInt");
@@ -638,9 +638,9 @@ ptrdiff_t executeInstanceMethodReturnRefArgsInt(ptrdiff_t reference, string name
 	return fn(reference, pCharName, i);
 }
 
-ptrdiff_t executeInstanceMethodReturnRefArgsStringBool(ptrdiff_t reference, string name, string s, bool b)
+void* executeInstanceMethodReturnRefArgsStringBool(void* reference, string name, string s, bool b)
 {
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*, char*, bool) FN;
+	alias extern(Windows) void* function(void*, char*, char*, bool) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(s);
 	
@@ -649,110 +649,110 @@ ptrdiff_t executeInstanceMethodReturnRefArgsStringBool(ptrdiff_t reference, stri
 	return fn(reference, pCharName, pCharValue, b);
 }
 
-void executeInstanceMethodReturnNoneArgsRef(ptrdiff_t reference, string name, ptrdiff_t reference2)
+void executeInstanceMethodReturnNoneArgsRef(void* reference, string name, void* reference2)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRef");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t) FN;
+	alias extern(Windows) void function(void*, char*, void*) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2);
 }
 
-void executeInstanceMethodReturnNoneArgsRefString(ptrdiff_t reference, string name, ptrdiff_t reference2, string s)
+void executeInstanceMethodReturnNoneArgsRefString(void* reference, string name, void* reference2, string s)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(s);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefString");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, char*) FN;
+	alias extern(Windows) void function(void*, char*, void*, char*) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, pCharValue);
 }
 
-void executeInstanceMethodReturnNoneArgsRefBool(ptrdiff_t reference, string name, ptrdiff_t reference2, bool b)
+void executeInstanceMethodReturnNoneArgsRefBool(void* reference, string name, void* reference2, bool b)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefBool");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, bool) FN;
+	alias extern(Windows) void function(void*, char*, void*, bool) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, b);
 }
 
-void executeInstanceMethodReturnNoneArgsRefInt(ptrdiff_t reference, string name, ptrdiff_t reference2, int i)
+void executeInstanceMethodReturnNoneArgsRefInt(void* reference, string name, void* reference2, int i)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefInt");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, int) FN;
+	alias extern(Windows) void function(void*, char*, void*, int) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, i);
 }
 
-void executeInstanceMethodReturnNoneArgsStructFloat(ptrdiff_t reference, string name, ptrdiff_t reference2, float f)
+void executeInstanceMethodReturnNoneArgsStructFloat(void* reference, string name, void* reference2, float f)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsStructFloat");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, float) FN;
+	alias extern(Windows) void function(void*, char*, void*, float) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, f);
 }
 
-void executeInstanceMethodReturnNoneArgsStructStructFloat(ptrdiff_t reference, string name, ptrdiff_t reference2, ptrdiff_t reference3, float f)
+void executeInstanceMethodReturnNoneArgsStructStructFloat(void* reference, string name, void* reference2, void* reference3, float f)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsStructStructFloat");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, ptrdiff_t, float) FN;
+	alias extern(Windows) void function(void*, char*, void*, void*, float) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, reference3, f);
 }
 
-void executeInstanceMethodReturnNoneArgsStructStructFloatRef(ptrdiff_t reference, string name, ptrdiff_t reference2, ptrdiff_t reference3, float f, ptrdiff_t reference4)
+void executeInstanceMethodReturnNoneArgsStructStructFloatRef(void* reference, string name, void* reference2, void* reference3, float f, void* reference4)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsStructStructFloatRef");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, ptrdiff_t, float, ptrdiff_t) FN;
+	alias extern(Windows) void function(void*, char*, void*, void*, float, void*) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, reference3, f, reference4);
 }
 
-void executeInstanceMethodReturnNoneArgsRefStructStructFloatBoolean(ptrdiff_t reference, string name, ptrdiff_t reference2, ptrdiff_t reference3, ptrdiff_t reference4, float f, bool b)
+void executeInstanceMethodReturnNoneArgsRefStructStructFloatBoolean(void* reference, string name, void* reference2, void* reference3, void* reference4, float f, bool b)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefStructStructFloatBoolean");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, ptrdiff_t, ptrdiff_t, float, bool) FN;
+	alias extern(Windows) void function(void*, char*, void*, void*, void*, float, bool) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2, reference3, reference4, f, b);	
 }
 
-void executeInstanceMethodReturnNoneArgsRefFloat(ptrdiff_t reference, string name, ptrdiff_t reference2, float f)
+void executeInstanceMethodReturnNoneArgsRefFloat(void* reference, string name, void* reference2, float f)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsRefFloat");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, float) FN;
+	alias extern(Windows) void function(void*, char*, void*, float) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, reference2,f);
 }
 
-void executeInstanceMethodReturnNoneArgsFloatFloatFloatFloatFloat(ptrdiff_t reference, string name, float f1, float f2, float f3, float f4, float f5)
+void executeInstanceMethodReturnNoneArgsFloatFloatFloatFloatFloat(void* reference, string name, float f1, float f2, float f3, float f4, float f5)
 {
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnNoneArgsFloatFloatFloatFloatFloat");
-	alias extern(Windows) void function(ptrdiff_t, char*, float, float, float, float, float) FN;
+	alias extern(Windows) void function(void*, char*, float, float, float, float, float) FN;
 	auto fn = cast(FN) fp;
 	fn(reference, pCharName, f1, f2, f3, f4, f5);
 }
 
-ptrdiff_t executeInstanceMethodReturnRefArgsString(ptrdiff_t reference, string name, string value)
+void* executeInstanceMethodReturnRefArgsString(void* reference, string name, string value)
 {
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*, char*) FN;
+	alias extern(Windows) void* function(void*, char*, char*) FN;
 	
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
@@ -762,9 +762,9 @@ ptrdiff_t executeInstanceMethodReturnRefArgsString(ptrdiff_t reference, string n
 	return fn(reference, pCharName, pCharValue);
 }
 
-string executeInstanceMethodReturnStringArgsNone(ptrdiff_t reference, string name)
+string executeInstanceMethodReturnStringArgsNone(void* reference, string name)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, out BSTR) FN;
+	alias extern(Windows) void function(void*, char*, out BSTR) FN;
 	
 	auto pCharName = toUTFz!(char*)(name);
 
@@ -778,9 +778,9 @@ string executeInstanceMethodReturnStringArgsNone(ptrdiff_t reference, string nam
 	return s;
 }
 
-string executeInstanceMethodReturnStringArgsInt(ptrdiff_t reference, string name, int i)
+string executeInstanceMethodReturnStringArgsInt(void* reference, string name, int i)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, int, out BSTR) FN;
+	alias extern(Windows) void function(void*, char*, int, out BSTR) FN;
 	
 	auto pCharName = toUTFz!(char*)(name);
 
@@ -794,9 +794,9 @@ string executeInstanceMethodReturnStringArgsInt(ptrdiff_t reference, string name
 	return s;
 }
 
-string executeInstanceMethodReturnStringArgsIntInt(ptrdiff_t reference, string name, int i1, int i2)
+string executeInstanceMethodReturnStringArgsIntInt(void* reference, string name, int i1, int i2)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, int, int, out BSTR) FN;
+	alias extern(Windows) void function(void*, char*, int, int, out BSTR) FN;
 	
 	auto pCharName = toUTFz!(char*)(name);
 
@@ -810,9 +810,9 @@ string executeInstanceMethodReturnStringArgsIntInt(ptrdiff_t reference, string n
 	return s;
 }
 
-int executeInstanceMethodReturnIntArgsStringRef(ptrdiff_t reference, string name, string value, ptrdiff_t r)
+int executeInstanceMethodReturnIntArgsStringRef(void* reference, string name, string value, void* r)
 {
-	alias extern(Windows) int function(ptrdiff_t, char*, char*, ptrdiff_t) FN;
+	alias extern(Windows) int function(void*, char*, char*, void*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
 	
@@ -821,9 +821,9 @@ int executeInstanceMethodReturnIntArgsStringRef(ptrdiff_t reference, string name
 	return fn(reference, pCharName, pCharValue, r);
 }
 
-float executeInstanceMethodReturnFloatArgsNone(ptrdiff_t reference, string name)
+float executeInstanceMethodReturnFloatArgsNone(void* reference, string name)
 {
-	alias extern(Windows) float function(ptrdiff_t, char*) FN;
+	alias extern(Windows) float function(void*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeInstanceMethodReturnFloatArgsNone");
@@ -831,9 +831,9 @@ float executeInstanceMethodReturnFloatArgsNone(ptrdiff_t reference, string name)
 	return fn(reference, pCharName);
 }
 
-ptrdiff_t executeClassMethodReturnRefArgsString(string qualifiedName, string name, string value)
+void* executeClassMethodReturnRefArgsString(string qualifiedName, string name, string value)
 {
-	alias extern(Windows) ptrdiff_t function(char*, char*, char*) FN;
+	alias extern(Windows) void* function(char*, char*, char*) FN;
 	auto pCharQualifiedName = toUTFz!(char*)(qualifiedName);
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
@@ -843,9 +843,9 @@ ptrdiff_t executeClassMethodReturnRefArgsString(string qualifiedName, string nam
 	return fn(pCharQualifiedName, pCharName, pCharValue);
 }
 
-ptrdiff_t executeClassMethodReturnRefArgsNone(string qualifiedName, string name)
+void* executeClassMethodReturnRefArgsNone(string qualifiedName, string name)
 {
-	alias extern(Windows) ptrdiff_t function(char*, char*) FN;
+	alias extern(Windows) void* function(char*, char*) FN;
 	auto pCharQualifiedName = toUTFz!(char*)(qualifiedName);
 	auto pCharName = toUTFz!(char*)(name);
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "executeClassMethodReturnRefArgsNone");
@@ -864,9 +864,9 @@ void executeClassMethodReturnNoneArgsNone(string qualifiedName, string name)
 	fn(pCharQualifiedName, pCharName);
 }
 
-ptrdiff_t executeClassMethodReturnRefArgsRef(string qualifiedName, string name, ptrdiff_t reference)
+void* executeClassMethodReturnRefArgsRef(string qualifiedName, string name, void* reference)
 {
-	alias extern(Windows) ptrdiff_t function(char*, char*, ptrdiff_t) FN;
+	alias extern(Windows) void* function(char*, char*, void*) FN;
 	
 	auto pCharQualifiedName = toUTFz!(char*)(qualifiedName);
 	auto pCharName = toUTFz!(char*)(name);
@@ -876,9 +876,9 @@ ptrdiff_t executeClassMethodReturnRefArgsRef(string qualifiedName, string name, 
 	return fn(pCharQualifiedName, pCharName, reference);
 }
 
-ptrdiff_t executeClassMethodReturnRefArgsIntUInt(string qualifiedName, string name, int i1, uint i2)
+void* executeClassMethodReturnRefArgsIntUInt(string qualifiedName, string name, int i1, uint i2)
 {
-	alias extern(Windows) ptrdiff_t function(char*, char*, int, uint) FN;
+	alias extern(Windows) void* function(char*, char*, int, uint) FN;
 	
 	auto pCharQualifiedName = toUTFz!(char*)(qualifiedName);
 	auto pCharName = toUTFz!(char*)(name);
@@ -888,9 +888,9 @@ ptrdiff_t executeClassMethodReturnRefArgsIntUInt(string qualifiedName, string na
 	return fn(pCharQualifiedName, pCharName, i1, i2);
 }
 
-ptrdiff_t executeClassMethodReturnRefArgsRefRefRefBool(string qualifiedName, string name, ptrdiff_t ref1, ptrdiff_t ref2, ptrdiff_t ref3, bool b)
+void* executeClassMethodReturnRefArgsRefRefRefBool(string qualifiedName, string name, void* ref1, void* ref2, void* ref3, bool b)
 {
-	alias extern(Windows) ptrdiff_t function(char*, char*, ptrdiff_t, ptrdiff_t, ptrdiff_t, bool) FN;
+	alias extern(Windows) void* function(char*, char*, void*, void*, void*, bool) FN;
 	
 	auto pCharQualifiedName = toUTFz!(char*)(qualifiedName);
 	auto pCharName = toUTFz!(char*)(name);
@@ -951,9 +951,9 @@ string executeClassMethodReturnStringArgsStringStringString(string qualifiedName
 	return s;
 }
 
-ptrdiff_t executeClassMethodReturnRefArgsRefNativeInt(string qualifiedName, string name, ptrdiff_t reference, ptrdiff_t i)
+void* executeClassMethodReturnRefArgsRefNativeInt(string qualifiedName, string name, void* reference, ptrdiff_t i)
 {
-	alias extern(Windows) ptrdiff_t function(char*, char*, ptrdiff_t, ptrdiff_t) FN;
+	alias extern(Windows) void* function(char*, char*, void*, ptrdiff_t) FN;
 	
 	auto pCharQualifiedName = toUTFz!(char*)(qualifiedName);
 	auto pCharName = toUTFz!(char*)(name);

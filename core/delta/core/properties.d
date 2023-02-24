@@ -71,13 +71,13 @@ template GenObjectProperty(string name, alias classType, bool read = true, bool 
 
 		@property `~className~` `~name~`() 
 		{
-			auto r = cast(ptrdiff_t) cast(void*) getPropertyReference(_reference, "`~name~`");
+			auto r = cast(void*) getPropertyReference(_reference, "`~name~`");
 
-			if(r == 0)
+			if(r is null)
 			{
 				_`~name~` = null;
 			}
-			else if (_`~name~` is null || _`~name~`.reference != r)
+			else if (_`~name~` is null || _`~name~`.reference !is r)
 			{
 				_`~name~` = new `~className~`(r);
 			}
@@ -86,7 +86,7 @@ template GenObjectProperty(string name, alias classType, bool read = true, bool 
 		
 		@property void `~name~`(`~className~` value) 
 		{
-			setPropertyReference(_reference, "`~name~`", (value is null) ? 0 : value.reference);
+			setPropertyReference(_reference, "`~name~`", (value is null) ? null : value.reference);
 			_`~name~` = value;
 		}
 		`;
@@ -140,50 +140,50 @@ template GenIntegerIndexedProperty(string name, alias ArrayType)
 	}`;
 }
 
-void setPropertyReference(ptrdiff_t reference1, string name, ptrdiff_t value)
+void setPropertyReference(void* reference1, string name, void* value)
 {
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "setPropertyReference");
-	alias extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t) FN;
+	alias extern(Windows) void function(void*, char*, void*) FN;
 	auto fn = cast(FN) fp;
 	fn(reference1, pChar, value);
 }
 
-ptrdiff_t getPropertyReference(ptrdiff_t reference, string name)
+void* getPropertyReference(void* reference, string name)
 {
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getPropertyReference");
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*) FN;
+	alias extern(Windows) void* function(void*, char*) FN;
 	auto fn = cast(FN) fp;
 	return fn(reference, pChar);
 }
 
-ptrdiff_t getPropertyStruct(ptrdiff_t reference, string name)
+void* getPropertyStruct(void* reference, string name)
 {
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getPropertyStruct");
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*) FN;
+	alias extern(Windows) void* function(void*, char*) FN;
 	auto fn = cast(FN) fp;
 	return fn(reference, pChar);
 }
 
 // TODO: Is index == size_t?
-ptrdiff_t getIntegerIndexedPropertyReference(ptrdiff_t reference, string name, int index)
+void* getIntegerIndexedPropertyReference(void* reference, string name, int index)
 {
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getIntegerIndexedPropertyReference");
-	alias extern(Windows) ptrdiff_t function(ptrdiff_t, char*, int) FN;
+	alias extern(Windows) void* function(void*, char*, int) FN;
 	auto fn = cast(FN) fp;
 	return fn(reference, pChar, index);
 }
 
-void setPropertyShort(ptrdiff_t reference, string name, short value)
+void setPropertyShort(void* reference, string name, short value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, short) FN;
+	alias extern(Windows) void function(void*, char*, short) FN;
 	
 	auto pChar = toUTFz!(char*)(name);
 
@@ -192,9 +192,9 @@ void setPropertyShort(ptrdiff_t reference, string name, short value)
 	fn(reference, pChar, value);
 }
 
-short getPropertyShort(ptrdiff_t reference1, string name)
+short getPropertyShort(void* reference1, string name)
 {
-	alias extern(Windows) short function(ptrdiff_t, char*) FN;
+	alias extern(Windows) short function(void*, char*) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getPropertySmallInt");
@@ -202,9 +202,9 @@ short getPropertyShort(ptrdiff_t reference1, string name)
 	return fn(reference1, pChar);
 }
 
-void setPropertyInt(ptrdiff_t reference, string name, int value)
+void setPropertyInt(void* reference, string name, int value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, int) FN;
+	alias extern(Windows) void function(void*, char*, int) FN;
 	auto pChar = toUTFz!(char*)(name);
 
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "setPropertyInteger");
@@ -212,9 +212,9 @@ void setPropertyInt(ptrdiff_t reference, string name, int value)
 	fn(reference, pChar, value);
 }
 
-int getPropertyInt(ptrdiff_t reference1, string name)
+int getPropertyInt(void* reference1, string name)
 {
-	alias extern(Windows) int function(ptrdiff_t, char*) FN;
+	alias extern(Windows) int function(void*, char*) FN;
 	
 	auto pChar = toUTFz!(char*)(name);
 	
@@ -223,9 +223,9 @@ int getPropertyInt(ptrdiff_t reference1, string name)
 	return fn(reference1, pChar);
 }
 
-void setPropertyUInt(ptrdiff_t reference1, string name, uint value)
+void setPropertyUInt(void* reference1, string name, uint value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, int) FN;
+	alias extern(Windows) void function(void*, char*, int) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "setPropertyCardinal");
@@ -233,9 +233,9 @@ void setPropertyUInt(ptrdiff_t reference1, string name, uint value)
 	fn(reference1, pChar, value);
 }
 
-uint getPropertyUInt(ptrdiff_t reference1, string name)
+uint getPropertyUInt(void* reference1, string name)
 {
-	alias extern(Windows) uint function(ptrdiff_t, char*) FN;
+	alias extern(Windows) uint function(void*, char*) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getPropertyCardinal");
@@ -243,9 +243,9 @@ uint getPropertyUInt(ptrdiff_t reference1, string name)
 	return fn(reference1, pChar);
 }
 
-void setPropertyEnum(ptrdiff_t reference, string name, string value)
+void setPropertyEnum(void* reference, string name, string value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, char*) FN;
+	alias extern(Windows) void function(void*, char*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
 	
@@ -254,9 +254,9 @@ void setPropertyEnum(ptrdiff_t reference, string name, string value)
 	fn(reference, pCharName, pCharValue);
 }
 
-string getPropertyEnum(ptrdiff_t reference, string name)
+string getPropertyEnum(void* reference, string name)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, out BSTR) FN;
+	alias extern(Windows) void function(void*, char*, out BSTR) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getPropertyEnum");
@@ -271,9 +271,9 @@ string getPropertyEnum(ptrdiff_t reference, string name)
 	return s;
 }
 
-void setPropertySet(ptrdiff_t reference, string name, string value)
+void setPropertySet(void* reference, string name, string value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, char*) FN;
+	alias extern(Windows) void function(void*, char*, char*) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
 	
@@ -282,9 +282,9 @@ void setPropertySet(ptrdiff_t reference, string name, string value)
 	fn(reference, pCharName, pCharValue);
 }
 
-void setPropertyBool(ptrdiff_t reference1, string name, bool value)
+void setPropertyBool(void* reference1, string name, bool value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, bool) FN;
+	alias extern(Windows) void function(void*, char*, bool) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "setPropertyBoolean");
@@ -292,9 +292,9 @@ void setPropertyBool(ptrdiff_t reference1, string name, bool value)
 	fn(reference1, pChar, value);
 }
 
-bool getPropertyBool(ptrdiff_t reference1, string name)
+bool getPropertyBool(void* reference1, string name)
 {
-	alias extern(Windows) bool function(ptrdiff_t, char*) FN;
+	alias extern(Windows) bool function(void*, char*) FN;
 	
 	auto pChar = toUTFz!(char*)(name);
 	
@@ -303,9 +303,9 @@ bool getPropertyBool(ptrdiff_t reference1, string name)
 	return fn(reference1, pChar);
 }
 
-void setPropertyFloat(ptrdiff_t reference1, string name, float value)
+void setPropertyFloat(void* reference1, string name, float value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, float) FN;
+	alias extern(Windows) void function(void*, char*, float) FN;
 	
 	auto pChar = toUTFz!(char*)(name);
 	
@@ -314,9 +314,9 @@ void setPropertyFloat(ptrdiff_t reference1, string name, float value)
 	fn(reference1, pChar, value);
 }
 
-float getPropertyFloat(ptrdiff_t reference1, string name)
+float getPropertyFloat(void* reference1, string name)
 {
-	alias extern(Windows) float function(ptrdiff_t, char*) FN;
+	alias extern(Windows) float function(void*, char*) FN;
 	
 	auto pChar = toUTFz!(char*)(name);
 	
@@ -325,9 +325,9 @@ float getPropertyFloat(ptrdiff_t reference1, string name)
 	return fn(reference1, pChar);
 }
 
-void setPropertyString(ptrdiff_t reference1, string name, string value)
+void setPropertyString(void* reference1, string name, string value)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, BSTR) FN;
+	alias extern(Windows) void function(void*, char*, BSTR) FN;
 	auto pCharName = toUTFz!(char*)(name);
 	auto pCharValue = toUTFz!(char*)(value);
 	
@@ -342,9 +342,9 @@ void setPropertyString(ptrdiff_t reference1, string name, string value)
 	SysFreeString(bStr);
 }
 
-string getPropertyString(ptrdiff_t reference, string name)
+string getPropertyString(void* reference, string name)
 {
-	alias extern(Windows) void function(ptrdiff_t, char*, out BSTR) FN;
+	alias extern(Windows) void function(void*, char*, out BSTR) FN;
 	auto pChar = toUTFz!(char*)(name);
 	
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "getPropertyString");

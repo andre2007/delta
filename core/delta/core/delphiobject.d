@@ -2,9 +2,9 @@ module delta.core.delphiobject;
 
 class DelphiObject
 {
-	protected ptrdiff_t _reference;
+	protected void* _reference;
 	
-	@property ptrdiff_t reference()
+	@property void* reference()
 	{
 		return _reference;
 	}
@@ -14,7 +14,7 @@ class DelphiObject
         return new T(_reference);
     }
 
-	this(ptrdiff_t reference)
+	this(void* reference)
 	{
 		_reference = reference;
 	}
