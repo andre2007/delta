@@ -40,10 +40,10 @@ template GenNotifyEvent(string eventName)
 void setEventArgsRef(DelphiObject object, string delphiEventName, void* framePointer, void* fnPointer)
 {
     alias EventArgsRef = void delegate(DelphiObject sender);
-    alias EventArgsRefCallback = extern(Windows) void function(ptrdiff_t, ptrdiff_t, ptrdiff_t) ;
-	alias Fn = extern(Windows) void function(ptrdiff_t, char*, ptrdiff_t, ptrdiff_t, EventArgsRefCallback) ;
+    alias EventArgsRefCallback = extern(Windows) void function(void*, void*, void*) ;
+	alias Fn = extern(Windows) void function(void*, char*, void*, void*, EventArgsRefCallback) ;
 	
-	void delegate(ptrdiff_t, ptrdiff_t, ptrdiff_t) dg = (ptrdiff_t delphiRef, ptrdiff_t dRef, ptrdiff_t funcRef) {
+	void delegate(void*, void*, void*) dg = (void* delphiRef, void* dRef, void* funcRef) {
 		EventArgsRef ne;
 		ne.funcptr = cast(void function(DelphiObject)) funcRef;
 		ne.ptr = cast(void*) dRef;
@@ -61,10 +61,5 @@ void setEventArgsRef(DelphiObject object, string delphiEventName, void* framePoi
 	auto pChar = toUTFz!(char*)(delphiEventName);
 	FARPROC fp = GetProcAddress(deltaLibrary.handle, "setNotifyEvent");
 	Fn fn = cast(Fn) fp;
-	fn(object.reference, pChar, cast(ptrdiff_t) framePointer, cast(ptrdiff_t) fnPointer, bindDelegate(dg));
-}
-
-ptrdiff_t getEventArgsRef(DelphiObject object, string delphiEventName)
-{
-    return 0;
+	fn(object.reference, pChar, framePointer, fnPointer, bindDelegate(dg));
 }

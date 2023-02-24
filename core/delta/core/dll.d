@@ -5,7 +5,7 @@ pragma(lib, "OleAut32.lib");
 import core.sys.windows.windows;
 import core.runtime;
 
-enum nil = -1;
+enum nil = null;
 
 struct DeltaLibrary
 {

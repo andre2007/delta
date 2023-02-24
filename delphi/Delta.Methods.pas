@@ -11,10 +11,10 @@ function executeClassMethodReturnIntArgsNone(const AQualifiedName,
   AName: PAnsiChar): Integer; stdcall;
 
 function executeClassMethodReturnRefArgsNone(const AQualifiedName,
-  AName: PAnsiChar): NativeInt; stdcall;
+  AName: PAnsiChar): Pointer; stdcall;
 
 function executeClassMethodReturnRefArgsString(const AQualifiedName, AName,
-  AValue: PAnsiChar): NativeInt; stdcall;
+  AValue: PAnsiChar): Pointer; stdcall;
 
 procedure executeClassMethodReturnNoneArgsString(const AQualifiedName,
   AName: PAnsiChar; const value: WideString); stdcall;
@@ -26,134 +26,134 @@ procedure executeClassMethodReturnNoneArgsStringStringString_Out_String
   (const AQualifiedName, AName: PAnsiChar; const v1, v2, v3: WideString;
   out value: WideString); stdcall;
 
-procedure executeInstanceMethodReturnEnumArgsNone(const Reference: NativeInt;
+procedure executeInstanceMethodReturnEnumArgsNone(Reference: Pointer;
   const AName: PAnsiChar; out value: WideString); stdcall;
 
 function executeClassMethodReturnRefArgsRef(const AQualifiedName,
-  AName: PAnsiChar; const Reference: NativeInt): NativeInt; stdcall;
+  AName: PAnsiChar; Reference: Pointer): Pointer; stdcall;
 
 function executeClassMethodReturnRefArgsIntUInt(const AQualifiedName,
-  AName: PAnsiChar; I1: Integer; I2: Cardinal): NativeInt; stdcall;
+  AName: PAnsiChar; I1: Integer; I2: Cardinal): Pointer; stdcall;
 
 function executeClassMethodReturnRefArgsRefNativeInt(const AQualifiedName,
-  AName: PAnsiChar; const Reference: NativeInt; I: NativeInt)
-  : NativeInt; stdcall;
+  AName: PAnsiChar; Reference: Pointer; I: NativeInt)
+  : Pointer; stdcall;
 
 function executeClassMethodReturnRefArgsRefRefRefBool(const AQualifiedName,
-  AName: PAnsiChar; const Ref1, Ref2, Ref3: NativeInt; B: Boolean)
-  : NativeInt; stdcall;
+  AName: PAnsiChar; Ref1, Ref2, Ref3: Pointer; B: Boolean)
+  : Pointer; stdcall;
 
-function executeInstanceMethod(const Reference: NativeInt; const AName: string;
+function executeInstanceMethod(Reference: Pointer; const AName: string;
   const Args: array of TValue): TValue;
 
-procedure executeInstanceMethodReturnNoneArgsNone(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsNone(Reference: Pointer;
   const AName: PAnsiChar); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsRef(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRef(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsRefString(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt; const AValue: PAnsiChar); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRefString(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer; const AValue: PAnsiChar); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsRefBool(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt; b : boolean); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRefBool(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer; b : boolean); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsRefInt(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt; i : Integer); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRefInt(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer; i : Integer); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsIntRef(const Reference: NativeInt;
-  const AName: PAnsiChar; i : Integer; Reference2: NativeInt ); stdcall;
+procedure executeInstanceMethodReturnNoneArgsIntRef(Reference: Pointer;
+  const AName: PAnsiChar; i : Integer; Reference2: Pointer ); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsStructFloat(const Reference
-  : NativeInt; const AName: PAnsiChar; Reference2: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsStructFloat(Reference
+  : Pointer; const AName: PAnsiChar; Reference2: Pointer;
   s: Single); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsStructStructFloat(const Reference
-  : NativeInt; const AName: PAnsiChar; Reference2, Reference3: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsStructStructFloat(Reference
+  : Pointer; const AName: PAnsiChar; Reference2, Reference3: Pointer;
   s: Single); stdcall;
 
 procedure executeInstanceMethodReturnNoneArgsStructStructFloatRef
-  (const Reference: NativeInt; const AName: PAnsiChar;
-  Reference2, Reference3: NativeInt; s: Single; Reference4: NativeInt); stdcall;
+  (Reference: Pointer; const AName: PAnsiChar;
+  Reference2, Reference3: Pointer; s: Single; Reference4: Pointer); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsRefFloat(const Reference
-  : NativeInt; const AName: PAnsiChar; Reference2: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsRefFloat(Reference
+  : Pointer; const AName: PAnsiChar; Reference2: Pointer;
   s: Single); stdcall;
 
 procedure executeInstanceMethodReturnNoneArgsRefStructStructFloatBoolean
-  (const Reference: NativeInt; const AName: PAnsiChar;
-  Reference2, Reference3, Reference4: NativeInt; s: Single;
+  (Reference: Pointer; const AName: PAnsiChar;
+  Reference2, Reference3, Reference4: Pointer; s: Single;
   B: Boolean); stdcall;
 
 procedure executeInstanceMethodReturnNoneArgsFloatFloatFloatFloatFloat
-  (const Reference: NativeInt; const AName: PAnsiChar;
+  (Reference: Pointer; const AName: PAnsiChar;
   s1, s2, s3, s4, s5: Single); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsString(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsString(Reference: Pointer;
   const AName, AValue: PAnsiChar); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsBool(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsBool(Reference: Pointer;
   const AName : PAnsiChar; AValue: Boolean); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsBoolBool(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsBoolBool(Reference: Pointer;
   const AName : PAnsiChar; b1, b2: Boolean); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsInt(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsInt(Reference: Pointer;
   const AName : PAnsiChar; AValue: Integer); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsFloat(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsFloat(Reference: Pointer;
   const AName : PAnsiChar; AValue: Single); stdcall;
 
-procedure executeInstanceMethodReturnNoneArgsFloatFloatBool(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsFloatFloatBool(Reference: Pointer;
   const AName : PAnsiChar; F1, F2: Single; B: Boolean); stdcall;
 
-function executeInstanceMethodReturnIntArgsNone(const Reference: NativeInt;
+function executeInstanceMethodReturnIntArgsNone(Reference: Pointer;
   const AName: PAnsiChar): Integer; stdcall;
 
-function executeInstanceMethodReturnFloatArgsNone(const Reference: NativeInt;
+function executeInstanceMethodReturnFloatArgsNone(Reference: Pointer;
   const AName: PAnsiChar): Single; stdcall;
 
-function executeInstanceMethodReturnBoolArgsNone(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsNone(Reference: Pointer;
   const AName: PAnsiChar): Boolean; stdcall;
 
-function executeInstanceMethodReturnBoolArgsBool(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsBool(Reference: Pointer;
   const AName: PAnsiChar; b: Boolean): Boolean; stdcall;
 
-function executeInstanceMethodReturnBoolArgsInt(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsInt(Reference: Pointer;
   const AName: PAnsiChar; i: Integer): Boolean; stdcall;
 
-function executeInstanceMethodReturnBoolArgsFloatFloat(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsFloatFloat(Reference: Pointer;
   const AName: PAnsiChar; s1, s2: Single): Boolean; stdcall;
 
-function executeInstanceMethodReturnBoolArgsRef(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt): Boolean; stdcall;
+function executeInstanceMethodReturnBoolArgsRef(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer): Boolean; stdcall;
 
-function executeInstanceMethodReturnRefArgsNone(const Reference: NativeInt;
-  const AName: PAnsiChar): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsNone(Reference: Pointer;
+  const AName: PAnsiChar): Pointer; stdcall;
 
-function executeInstanceMethodReturnRefArgsString(const Reference: NativeInt;
-  const AName, AValue: PAnsiChar): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsString(Reference: Pointer;
+  const AName, AValue: PAnsiChar): Pointer; stdcall;
 
-function executeInstanceMethodReturnRefArgsInt(const Reference: NativeInt;
-  const AName: PAnsiChar; const R: Integer): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsInt(Reference: Pointer;
+  const AName: PAnsiChar; R: Integer): Pointer; stdcall;
 
-function executeInstanceMethodReturnRefArgsStringBool(const Reference: NativeInt;
-  const AName, S: PAnsiChar; B: Boolean): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsStringBool(Reference: Pointer;
+  const AName, S: PAnsiChar; B: Boolean): Pointer; stdcall;
 
-function executeInstanceMethodReturnIntArgsString(const Reference: NativeInt;
+function executeInstanceMethodReturnIntArgsString(Reference: Pointer;
   const AName, AValue: PAnsiChar): Integer; stdcall;
 
-function executeInstanceMethodReturnIntArgsStringRef(const Reference: NativeInt;
-  const AName, AValue: PAnsiChar; const R: NativeInt): Integer; stdcall;
+function executeInstanceMethodReturnIntArgsStringRef(Reference: Pointer;
+  const AName, AValue: PAnsiChar; R: Pointer): Integer; stdcall;
 
-procedure executeInstanceMethodReturnStringArgsNone_Out_String(const Reference
-  : NativeInt; const AName: PAnsiChar; out value: WideString); stdcall;
+procedure executeInstanceMethodReturnStringArgsNone_Out_String(Reference
+  : Pointer; const AName: PAnsiChar; out value: WideString); stdcall;
 
-procedure executeInstanceMethodReturnStringArgsInt_Out_String(const Reference
-  : NativeInt; const AName: PAnsiChar; I : Integer; out value: WideString); stdcall;
+procedure executeInstanceMethodReturnStringArgsInt_Out_String(Reference
+  : Pointer; const AName: PAnsiChar; I : Integer; out value: WideString); stdcall;
 
-procedure executeInstanceMethodReturnStringArgsIntInt_Out_String(const Reference
-  : NativeInt; const AName: PAnsiChar; I1, I2 : Integer; out value: WideString); stdcall;
+procedure executeInstanceMethodReturnStringArgsIntInt_Out_String(Reference
+  : Pointer; const AName: PAnsiChar; I1, I2 : Integer; out value: WideString); stdcall;
 
 exports executeInstanceMethodReturnNoneArgsNone,
   executeInstanceMethodReturnRefArgsNone,
@@ -244,13 +244,13 @@ begin
 end;
 
 function executeClassMethodReturnRefArgsString(const AQualifiedName, AName,
-  AValue: PAnsiChar): NativeInt; stdcall;
+  AValue: PAnsiChar): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeClassMethod(string(AQualifiedName), string(AName),
     [string(AValue)]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
 procedure executeClassMethodReturnNoneArgsString(const AQualifiedName,
@@ -266,82 +266,82 @@ begin
 end;
 
 function executeClassMethodReturnRefArgsNone(const AQualifiedName,
-  AName: PAnsiChar): NativeInt; stdcall;
+  AName: PAnsiChar): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeClassMethod(string(AQualifiedName), string(AName), []);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
 function executeClassMethodReturnRefArgsRef(const AQualifiedName,
-  AName: PAnsiChar; const Reference: NativeInt): NativeInt; stdcall;
+  AName: PAnsiChar; Reference: Pointer): Pointer; stdcall;
 var
   value: TValue;
   obj: TObject;
 begin
-  if Reference = -1 then
+  if Reference = nil then
     obj := nil
   else
     obj := TObject(Reference);
 
   value := executeClassMethod(string(AQualifiedName), string(AName), [obj]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
 function executeClassMethodReturnRefArgsRefNativeInt(const AQualifiedName,
-  AName: PAnsiChar; const Reference: NativeInt; I: NativeInt)
-  : NativeInt; stdcall;
+  AName: PAnsiChar; Reference: Pointer; I: NativeInt)
+  : Pointer; stdcall;
 var
   value: TValue;
   obj: TObject;
 begin
-  if Reference = -1 then
+  if Reference = nil then
     obj := nil
   else
     obj := TObject(Reference);
 
   value := executeClassMethod(string(AQualifiedName), string(AName), [obj, I]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
 function executeClassMethodReturnRefArgsRefRefRefBool(const AQualifiedName,
-  AName: PAnsiChar; const Ref1, Ref2, Ref3: NativeInt; B: Boolean)
-  : NativeInt; stdcall;
+  AName: PAnsiChar; Ref1, Ref2, Ref3: Pointer; B: Boolean)
+  : Pointer; stdcall;
 var
   value: TValue;
   obj1, obj2, obj3: TObject;
 begin
-  if Ref1 = -1 then
+  if Ref1 = nil then
     obj1 := nil
   else
     obj1 := TObject(Ref1);
 
-  if Ref2 = -1 then
+  if Ref2 = nil then
     obj2 := nil
   else
     obj2 := TObject(Ref2);
 
-  if Ref3 = -1 then
+  if Ref3 = nil then
     obj3 := nil
   else
     obj3 := TObject(Ref3);
 
   value := executeClassMethod(string(AQualifiedName), string(AName),
     [obj1, obj2, obj3, B]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
 function executeClassMethodReturnRefArgsIntUInt(const AQualifiedName,
-  AName: PAnsiChar; I1: Integer; I2: Cardinal): NativeInt; stdcall;
+  AName: PAnsiChar; I1: Integer; I2: Cardinal): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeClassMethod(string(AQualifiedName), string(AName), [I1, I2]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
-function executeInstanceMethod(const Reference: NativeInt; const AName: string;
+function executeInstanceMethod(Reference: Pointer; const AName: string;
   const Args: array of TValue): TValue;
 var
   context: TRttiContext;
@@ -368,13 +368,13 @@ begin
   end;
 end;
 
-procedure executeInstanceMethodReturnNoneArgsNone(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsNone(Reference: Pointer;
   const AName: PAnsiChar); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), []);
 end;
 
-function executeInstanceMethodReturnIntArgsNone(const Reference: NativeInt;
+function executeInstanceMethodReturnIntArgsNone(Reference: Pointer;
   const AName: PAnsiChar): Integer; stdcall;
 var
   value: TValue;
@@ -383,7 +383,7 @@ begin
   result := Integer(value.AsInteger);
 end;
 
-function executeInstanceMethodReturnFloatArgsNone(const Reference: NativeInt;
+function executeInstanceMethodReturnFloatArgsNone(Reference: Pointer;
   const AName: PAnsiChar): Single; stdcall;
 var
   value: TValue;
@@ -392,7 +392,7 @@ begin
   result := value.AsType<Single>;
 end;
 
-function executeInstanceMethodReturnBoolArgsNone(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsNone(Reference: Pointer;
   const AName: PAnsiChar): Boolean; stdcall;
 var
   value: TValue;
@@ -401,7 +401,7 @@ begin
   result := Boolean(value.AsBoolean);
 end;
 
-function executeInstanceMethodReturnBoolArgsBool(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsBool(Reference: Pointer;
   const AName: PAnsiChar; b: Boolean): Boolean; stdcall;
 var
   value: TValue;
@@ -410,7 +410,7 @@ begin
   result := Boolean(value.AsBoolean);
 end;
 
-function executeInstanceMethodReturnBoolArgsInt(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsInt(Reference: Pointer;
   const AName: PAnsiChar; i: Integer): Boolean; stdcall;
 var
   value: TValue;
@@ -419,7 +419,7 @@ begin
   result := Boolean(value.AsBoolean);
 end;
 
-function executeInstanceMethodReturnBoolArgsFloatFloat(const Reference: NativeInt;
+function executeInstanceMethodReturnBoolArgsFloatFloat(Reference: Pointer;
   const AName: PAnsiChar; s1, s2: Single): Boolean; stdcall;
 var
   value: TValue;
@@ -428,13 +428,13 @@ begin
   result := Boolean(value.AsBoolean);
 end;
 
-function executeInstanceMethodReturnBoolArgsRef(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt): Boolean; stdcall;
+function executeInstanceMethodReturnBoolArgsRef(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer): Boolean; stdcall;
 var
   value: TValue;
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
@@ -442,90 +442,90 @@ begin
   result := Boolean(value.AsBoolean);
 end;
 
-function executeInstanceMethodReturnRefArgsNone(const Reference: NativeInt;
-  const AName: PAnsiChar): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsNone(Reference: Pointer;
+  const AName: PAnsiChar): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeInstanceMethod(Reference, string(AName), []);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
-procedure executeInstanceMethodReturnNoneArgsRef(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRef(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer); stdcall;
 var
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
   executeInstanceMethod(Reference, string(AName), [obj]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsRefString(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt; const AValue: PAnsiChar); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRefString(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer; const AValue: PAnsiChar); stdcall;
 var
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
   executeInstanceMethod(Reference, string(AName), [obj, string(AValue)]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsRefBool(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt; b : boolean); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRefBool(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer; b : boolean); stdcall;
 var
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
   executeInstanceMethod(Reference, string(AName), [obj, b]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsRefInt(const Reference: NativeInt;
-  const AName: PAnsiChar; Reference2: NativeInt; I : Integer); stdcall;
+procedure executeInstanceMethodReturnNoneArgsRefInt(Reference: Pointer;
+  const AName: PAnsiChar; Reference2: Pointer; I : Integer); stdcall;
 var
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
   executeInstanceMethod(Reference, string(AName), [obj, i]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsIntRef(const Reference: NativeInt;
-  const AName: PAnsiChar; I : Integer; Reference2: NativeInt); stdcall;
+procedure executeInstanceMethodReturnNoneArgsIntRef(Reference: Pointer;
+  const AName: PAnsiChar; I : Integer; Reference2: Pointer); stdcall;
 var
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
   executeInstanceMethod(Reference, string(AName), [obj, i]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsRefFloat(const Reference
-  : NativeInt; const AName: PAnsiChar; Reference2: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsRefFloat(Reference
+  : Pointer; const AName: PAnsiChar; Reference2: Pointer;
   s: Single); stdcall;
 var
   obj: TObject;
 begin
-  if Reference2 = -1 then
+  if Reference2 = nil then
     obj := nil
   else
     obj := TObject(Reference2);
   executeInstanceMethod(Reference, string(AName), [obj, s]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsStructFloat(const Reference
-  : NativeInt; const AName: PAnsiChar; Reference2: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsStructFloat(Reference
+  : Pointer; const AName: PAnsiChar; Reference2: Pointer;
   s: Single); stdcall;
 var
   context: TRttiContext;
@@ -551,8 +551,8 @@ begin
   end;
 end;
 
-procedure executeInstanceMethodReturnNoneArgsStructStructFloat(const Reference
-  : NativeInt; const AName: PAnsiChar; Reference2, Reference3: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsStructStructFloat(Reference
+  : Pointer; const AName: PAnsiChar; Reference2, Reference3: Pointer;
   s: Single); stdcall;
 var
   context: TRttiContext;
@@ -583,8 +583,8 @@ begin
 end;
 
 procedure executeInstanceMethodReturnNoneArgsStructStructFloatRef
-  (const Reference: NativeInt; const AName: PAnsiChar;
-  Reference2, Reference3: NativeInt; s: Single; Reference4: NativeInt); stdcall;
+  (Reference: Pointer; const AName: PAnsiChar;
+  Reference2, Reference3: Pointer; s: Single; Reference4: Pointer); stdcall;
 var
   context: TRttiContext;
   instType: TRttiInstanceType;
@@ -615,8 +615,8 @@ begin
 end;
 
 procedure executeInstanceMethodReturnNoneArgsRefStructStructFloatBoolean
-  (const Reference: NativeInt; const AName: PAnsiChar;
-  Reference2, Reference3, Reference4: NativeInt; s: Single;
+  (Reference: Pointer; const AName: PAnsiChar;
+  Reference2, Reference3, Reference4: Pointer; s: Single;
   B: Boolean); stdcall;
 var
   context: TRttiContext;
@@ -646,77 +646,77 @@ Begin
   end;
 End;
 
-procedure executeInstanceMethodReturnNoneArgsString(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsString(Reference: Pointer;
   const AName, AValue: PAnsiChar); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [string(AValue)]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsBool(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsBool(Reference: Pointer;
   const AName : PAnsiChar; AValue: Boolean); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [AValue]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsBoolBool(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsBoolBool(Reference: Pointer;
   const AName : PAnsiChar; b1, b2: Boolean); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [b1, b2]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsInt(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsInt(Reference: Pointer;
   const AName : PAnsiChar; AValue: Integer); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [AValue]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsFloat(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsFloat(Reference: Pointer;
   const AName : PAnsiChar; AValue: Single); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [AValue]);
 end;
 
-procedure executeInstanceMethodReturnNoneArgsFloatFloatBool(const Reference: NativeInt;
+procedure executeInstanceMethodReturnNoneArgsFloatFloatBool(Reference: Pointer;
   const AName : PAnsiChar; F1, F2: Single; B: Boolean); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [F1, F2, B]);
 end;
 
 procedure executeInstanceMethodReturnNoneArgsFloatFloatFloatFloatFloat
-  (const Reference: NativeInt; const AName: PAnsiChar;
+  (Reference: Pointer; const AName: PAnsiChar;
   s1, s2, s3, s4, s5: Single); stdcall;
 begin
   executeInstanceMethod(Reference, string(AName), [s1, s2, s3, s4, s5]);
 end;
 
-function executeInstanceMethodReturnRefArgsInt(const Reference: NativeInt;
-  const AName: PAnsiChar; const R: Integer): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsInt(Reference: Pointer;
+  const AName: PAnsiChar; R: Integer): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeInstanceMethod(Reference, string(AName), [R]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
-function executeInstanceMethodReturnRefArgsStringBool(const Reference: NativeInt;
-  const AName, S: PAnsiChar; B: Boolean): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsStringBool(Reference: Pointer;
+  const AName, S: PAnsiChar; B: Boolean): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeInstanceMethod(Reference, string(AName), [string(S), B]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
-function executeInstanceMethodReturnRefArgsString(const Reference: NativeInt;
-  const AName, AValue: PAnsiChar): NativeInt; stdcall;
+function executeInstanceMethodReturnRefArgsString(Reference: Pointer;
+  const AName, AValue: PAnsiChar): Pointer; stdcall;
 var
   value: TValue;
 begin
   value := executeInstanceMethod(Reference, string(AName), [string(AValue)]);
-  result := NativeInt(value.AsObject);
+  result := value.AsObject;
 end;
 
-function executeInstanceMethodReturnIntArgsString(const Reference: NativeInt;
+function executeInstanceMethodReturnIntArgsString(Reference: Pointer;
   const AName, AValue: PAnsiChar): Integer; stdcall;
 var
   value: TValue;
@@ -725,8 +725,8 @@ begin
   result := value.AsInteger;
 end;
 
-function executeInstanceMethodReturnIntArgsStringRef(const Reference: NativeInt;
-  const AName, AValue: PAnsiChar; const R: NativeInt): Integer; stdcall;
+function executeInstanceMethodReturnIntArgsStringRef(Reference: Pointer;
+  const AName, AValue: PAnsiChar; R: Pointer): Integer; stdcall;
 var
   value: TValue;
 begin
@@ -735,8 +735,8 @@ begin
   result := value.AsInteger;
 end;
 
-procedure executeInstanceMethodReturnStringArgsNone_Out_String(const Reference
-  : NativeInt; const AName: PAnsiChar; out value: WideString); stdcall;
+procedure executeInstanceMethodReturnStringArgsNone_Out_String(Reference
+  : Pointer; const AName: PAnsiChar; out value: WideString); stdcall;
 var
   methodResultValue: TValue;
 begin
@@ -744,8 +744,8 @@ begin
   value := methodResultValue.AsString;
 end;
 
-procedure executeInstanceMethodReturnStringArgsInt_Out_String(const Reference
-  : NativeInt; const AName: PAnsiChar; I: Integer; out value: WideString); stdcall;
+procedure executeInstanceMethodReturnStringArgsInt_Out_String(Reference
+  : Pointer; const AName: PAnsiChar; I: Integer; out value: WideString); stdcall;
 var
   methodResultValue: TValue;
 begin
@@ -753,8 +753,8 @@ begin
   value := methodResultValue.AsString;
 end;
 
-procedure executeInstanceMethodReturnStringArgsIntInt_Out_String(const Reference
-  : NativeInt; const AName: PAnsiChar; I1, I2: Integer; out value: WideString); stdcall;
+procedure executeInstanceMethodReturnStringArgsIntInt_Out_String(Reference
+  : Pointer; const AName: PAnsiChar; I1, I2: Integer; out value: WideString); stdcall;
 var
   methodResultValue: TValue;
 begin
@@ -762,7 +762,7 @@ begin
   value := methodResultValue.AsString;
 end;
 
-procedure executeInstanceMethodReturnEnumArgsNone(const Reference: NativeInt;
+procedure executeInstanceMethodReturnEnumArgsNone(Reference: Pointer;
   const AName: PAnsiChar; out value: WideString); stdcall;
 var
   s: String;
